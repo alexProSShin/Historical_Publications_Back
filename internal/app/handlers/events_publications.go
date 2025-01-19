@@ -8,6 +8,20 @@ import (
 	"strconv"
 )
 
+// HandleRemoveEventFromPublication godoc
+// @Summary      Удалить событие из публикации
+// @Description  Удаляет событие из черновика публикации пользователя.
+// @Tags         Events-Publications
+// @Accept       json
+// @Produce      json
+// @Param        eventID  path    int  true  "Идентификатор события"
+// @Security BearerAuth
+// @Success      204      {object}  nil
+// @Failure      400      {object}  gin.H  "Неверный формат ID события"
+// @Failure      401      {object}  gin.H  "Неверные учетные данные"
+// @Failure      404      {object}  gin.H  "Событие или публикация не найдены"
+// @Failure      500      {object}  gin.H  "Внутренняя ошибка сервера"
+// @Router       /events/{eventID}/publications [delete]
 func (h *Handler) HandleRemoveEventFromPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
@@ -36,6 +50,22 @@ func (h *Handler) HandleRemoveEventFromPublication(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+// HandleUpdateEventPriority godoc
+// @Summary      Обновить приоритет события
+// @Description  Обновляет приоритет события в черновике публикации пользователя.
+// @Tags         Events-Publications
+// @Accept       json
+// @Produce      json
+// @Param        eventID  path    int                   true  "Идентификатор события"
+// @Param        priority body    models.UpdateEventPriority  true  "Новый приоритет события"
+// @Security BearerAuth
+// @Success      200      {object}  nil
+// @Failure      400      {object}  gin.H  "Неверный формат ID события или данных приоритета"
+// @Failure      401      {object}  gin.H  "Неверные учетные данные"
+// @Failure      404      {object}  gin.H  "Черновик публикации не найден"
+// @Failure      409      {object}  gin.H  "Публикация уже удалена"
+// @Failure      500      {object}  gin.H  "Внутренняя ошибка сервера"
+// @Router       /events/{eventID}/priority [put]
 func (h *Handler) HandleUpdateEventPriority(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {

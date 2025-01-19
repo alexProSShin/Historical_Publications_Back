@@ -70,3 +70,11 @@ func (r *PostgresRepository) UpdateUser(userID int, updateData *models.UpdateUse
 
 	return user, nil
 }
+
+func (r *PostgresRepository) GetUserByID(userID int) (*models.User, error) {
+	var user models.User
+	if err := r.db.First(&user, userID).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

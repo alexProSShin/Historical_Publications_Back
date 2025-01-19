@@ -1,0 +1,976 @@
+definitions:
+  gin.H:
+    additionalProperties: {}
+    type: object
+  models.CreateEventDTO:
+    properties:
+      description:
+        description: Краткое описание события
+        type: string
+      event_type:
+        allOf:
+        - $ref: '#/definitions/models.EventType'
+        description: 'тип события: локация, событие, артефакт'
+      info:
+        description: информация о событии
+        type: string
+      source:
+        description: Источник информации об этом событии
+        type: string
+      title:
+        description: Название события
+        type: string
+    type: object
+  models.EventType:
+    enum:
+    - Локация
+    - Событие
+    - Артефакт
+    type: string
+    x-enum-varnames:
+    - EventTypeLocation
+    - EventTypeEvent
+    - EventTypeArtifact
+  models.GetEventsDTO:
+    properties:
+      events_count:
+        type: integer
+      historical_events:
+        items:
+          $ref: '#/definitions/models.HistoricalEvent'
+        type: array
+      publications_id:
+        type: integer
+    type: object
+  models.HistoricalEvent:
+    properties:
+      description:
+        description: Краткое описание события
+        type: string
+      event_type:
+        allOf:
+        - $ref: '#/definitions/models.EventType'
+        description: 'тип события: локация, событие, артефакт'
+      id:
+        description: Уникальный идентификатор события
+        type: integer
+      info:
+        description: информация о событии
+        type: string
+      photo_url:
+        description: URL фотографии, связанной с событием
+        type: string
+      source:
+        description: Источник информации об этом событии
+        type: string
+      status:
+        description: Установлен статус по умолчанию
+        type: string
+      title:
+        description: Название события
+        type: string
+    type: object
+  models.LoginResponseDTO:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/models.Role'
+      token:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.LoginUserDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.Publication:
+    properties:
+      completion_date:
+        type: string
+      creation_date:
+        type: string
+      description:
+        description: Краткое описание события
+        type: string
+      formation_date:
+        type: string
+      id:
+        type: integer
+      moderator_id:
+        type: integer
+      status:
+        description: Установлен статус по умолчанию
+        type: string
+      title:
+        description: Название публикации (исторического события)
+        type: string
+      trust_score:
+        type: number
+      user_id:
+        type: integer
+    type: object
+  models.RegisterUserDTO:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  models.Role:
+    enum:
+    - user
+    - moderator
+    type: string
+    x-enum-varnames:
+    - RoleUser
+    - RoleModerator
+  models.UpdateEventDTO:
+    properties:
+      description:
+        description: Краткое описание события
+        type: string
+      event_type:
+        allOf:
+        - $ref: '#/definitions/models.EventType'
+        description: 'тип события: локация, событие, артефакт'
+      info:
+        description: информация о событии
+        type: string
+      source:
+        description: Источник информации об этом событии
+        type: string
+      title:
+        description: Название события
+        type: string
+    type: object
+  models.UpdateEventPriority:
+    properties:
+      priority:
+        type: integer
+    type: object
+  models.UpdatePublicationDTO:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  models.UpdateUserDTO:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/models.Role'
+      user_id:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+    url: http://www.example.com/support
+  description: API для управления событиями, публикациями и изображениями.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://example.com/terms/
+  title: RIP API
+  version: "1.0"
+paths:
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список событий с возможностью фильтрации по названию.
+        Также возвращает черновик публикации пользователя, если он существует.
+      parameters:
+      - description: Название события
+        in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetEventsDTO'
+        "404":
+          description: События не найдены
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Получить список событий
+      tags:
+      - Events
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новое событие в систему.
+      parameters:
+      - description: Информация о событии
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateEventDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.HistoricalEvent'
+        "400":
+          description: Неверный формат данных
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Добавить новое событие
+      tags:
+      - Events
+  /events/{eventID}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет событие по его уникальному идентификатору.
+      parameters:
+      - description: Идентификатор события
+        in: path
+        name: eventID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Неверный формат ID события
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Событие не найдено
+          schema:
+            $ref: '#/definitions/gin.H'
+        "409":
+          description: Событие уже удалено
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Удалить событие по ID
+      tags:
+      - Events
+    get:
+      consumes:
+      - application/json
+      description: Возвращает событие по уникальному идентификатору.
+      parameters:
+      - description: Идентификатор события
+        in: path
+        name: eventID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HistoricalEvent'
+        "400":
+          description: Неверный формат ID события
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Событие не найдено
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Получить событие по ID
+      tags:
+      - Events
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о событии по его уникальному идентификатору.
+      parameters:
+      - description: Идентификатор события
+        in: path
+        name: eventID
+        required: true
+        type: integer
+      - description: Обновленные данные события
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateEventDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HistoricalEvent'
+        "400":
+          description: Неверный формат данных
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Событие не найдено
+          schema:
+            $ref: '#/definitions/gin.H'
+        "409":
+          description: Событие уже удалено
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Обновить событие по ID
+      tags:
+      - Events
+  /events/{eventID}/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Добавляет изображение к событию по его ID.
+      parameters:
+      - description: Идентификатор события
+        in: path
+        name: eventID
+        required: true
+        type: integer
+      - description: Изображение события
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Неверный формат ID события или файла
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Событие не найдено
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Добавить изображение к событию
+      tags:
+      - Events
+  /events/{eventID}/priority:
+    put:
+      consumes:
+      - application/json
+      description: Обновляет приоритет события в черновике публикации пользователя.
+      parameters:
+      - description: Идентификатор события
+        in: path
+        name: eventID
+        required: true
+        type: integer
+      - description: Новый приоритет события
+        in: body
+        name: priority
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateEventPriority'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Неверный формат ID события или данных приоритета
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Черновик публикации не найден
+          schema:
+            $ref: '#/definitions/gin.H'
+        "409":
+          description: Публикация уже удалена
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Обновить приоритет события
+      tags:
+      - Events-Publications
+  /events/{eventID}/publications:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет событие из черновика публикации пользователя.
+      parameters:
+      - description: Идентификатор события
+        in: path
+        name: eventID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Неверный формат ID события
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Событие или публикация не найдены
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Удалить событие из публикации
+      tags:
+      - Events-Publications
+    post:
+      consumes:
+      - application/json
+      description: Добавляет событие в черновик публикации пользователя.
+      parameters:
+      - description: Идентификатор события
+        in: path
+        name: eventID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Неверный формат ID события
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Событие или черновик публикации не найдено
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Добавить событие в публикацию
+      tags:
+      - Events
+  /publications:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список публикаций с возможностью фильтрации по статусу
+        и диапазону дат.
+      parameters:
+      - description: Статус публикации
+        in: query
+        name: status
+        type: string
+      - description: 'Дата начала (формат: yyyy-mm-dd)'
+        in: query
+        name: startDate
+        type: string
+      - description: 'Дата окончания (формат: yyyy-mm-dd)'
+        in: query
+        name: endDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список публикаций
+          schema:
+            items:
+              $ref: '#/definitions/models.Publication'
+            type: array
+        "400":
+          description: Неверный формат параметров
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Публикации не найдены
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Получить список публикаций
+      tags:
+      - Publications
+  /publications/{publicationID}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет публикацию по уникальному идентификатору.
+      parameters:
+      - description: Идентификатор публикации
+        in: path
+        name: publicationID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Публикация успешно удалена
+        "400":
+          description: Неверный формат ID публикации
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Публикация не найдена
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Удалить публикацию по ID
+      tags:
+      - Publications
+    get:
+      consumes:
+      - application/json
+      description: Возвращает публикацию по уникальному идентификатору.
+      parameters:
+      - description: Идентификатор публикации
+        in: path
+        name: publicationID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Публикация
+          schema:
+            $ref: '#/definitions/models.Publication'
+        "400":
+          description: Неверный формат ID публикации
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Публикация не найдена
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Получить публикацию по ID
+      tags:
+      - Publications
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о публикации по уникальному идентификатору.
+      parameters:
+      - description: Идентификатор публикации
+        in: path
+        name: publicationID
+        required: true
+        type: integer
+      - description: Обновленные данные публикации
+        in: body
+        name: publication
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePublicationDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленная публикация
+          schema:
+            $ref: '#/definitions/models.Publication'
+        "400":
+          description: Неверный формат данных
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Публикация не найдена
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Обновить публикацию по ID
+      tags:
+      - Publications
+  /publications/{publicationID}/finalize:
+    post:
+      consumes:
+      - application/json
+      description: Переводит публикацию в финальный статус.
+      parameters:
+      - description: Идентификатор публикации
+        in: path
+        name: publicationID
+        required: true
+        type: integer
+      - description: Статус публикации
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Завершенная публикация
+          schema:
+            $ref: '#/definitions/models.Publication'
+        "400":
+          description: Неверный формат данных
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Публикация не найдена
+          schema:
+            $ref: '#/definitions/gin.H'
+        "409":
+          description: Неверный статус для завершения публикации
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Завершить публикацию
+      tags:
+      - Publications
+  /publications/{publicationID}/form:
+    post:
+      consumes:
+      - application/json
+      description: Переводит черновик публикации в статус работы.
+      parameters:
+      - description: Идентификатор публикации
+        in: path
+        name: publicationID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Публикация в статусе работы
+          schema:
+            $ref: '#/definitions/models.Publication'
+        "400":
+          description: Неверный формат ID публикации
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Публикация не найдена
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Перевести публикацию в статус работы
+      tags:
+      - Publications
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Осуществляет вход пользователя, если его учетные данные верны,
+        и возвращает JWT токен.
+      parameters:
+      - description: Данные для входа
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponseDTO'
+        "400":
+          description: Неверные данные запроса
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Вход пользователя
+      tags:
+      - Auth
+  /users/logout:
+    post:
+      consumes:
+      - application/json
+      description: Завершаем сессию пользователя и удаляем его токен.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Неавторизованный пользователь
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Выход пользователя
+      tags:
+      - Auth
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует нового пользователя и возвращает JWT токен.
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.LoginResponseDTO'
+        "400":
+          description: Неверные данные запроса
+          schema:
+            $ref: '#/definitions/gin.H'
+        "409":
+          description: Пользователь уже существует
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Регистрация нового пользователя
+      tags:
+      - Auth
+  /users/update:
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные пользователя.
+      parameters:
+      - description: Данные для обновления
+        in: body
+        name: updateData
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленный пользователь
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Неверные данные запроса
+          schema:
+            $ref: '#/definitions/gin.H'
+        "401":
+          description: Неавторизованный пользователь
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - BearerAuth: []
+      summary: Обновить информацию о пользователе
+      tags:
+      - Auth
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    description: 'Use the JWT Bearer Token for authorization. Example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

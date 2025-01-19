@@ -9,6 +9,22 @@ import (
 	"time"
 )
 
+// HandleGetPublications godoc
+// @Summary      Получить список публикаций
+// @Description  Возвращает список публикаций с возможностью фильтрации по статусу и диапазону дат.
+// @Tags         Publications
+// @Accept       json
+// @Produce      json
+// @Param        status    query    string     false  "Статус публикации"
+// @Param        startDate query    string     false  "Дата начала (формат: yyyy-mm-dd)"
+// @Param        endDate   query    string     false  "Дата окончания (формат: yyyy-mm-dd)"
+// @Security BearerAuth
+// @Success      200      {array}   models.Publication   "Список публикаций"
+// @Failure      400      {object}  gin.H  "Неверный формат параметров"
+// @Failure      401      {object}  gin.H  "Неверные учетные данные"
+// @Failure      404      {object}  gin.H  "Публикации не найдены"
+// @Failure      500      {object}  gin.H  "Внутренняя ошибка сервера"
+// @Router       /publications [get]
 func (h *Handler) HandleGetPublications(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
@@ -54,6 +70,20 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 	c.JSON(http.StatusOK, publications)
 }
 
+// HandleGetPublicationByID godoc
+// @Summary      Получить публикацию по ID
+// @Description  Возвращает публикацию по уникальному идентификатору.
+// @Tags         Publications
+// @Accept       json
+// @Produce      json
+// @Param        publicationID  path    int  true  "Идентификатор публикации"
+// @Security BearerAuth
+// @Success      200            {object}  models.Publication   "Публикация"
+// @Failure      400            {object}  gin.H  "Неверный формат ID публикации"
+// @Failure      401            {object}  gin.H  "Неверные учетные данные"
+// @Failure      404            {object}  gin.H  "Публикация не найдена"
+// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Router       /publications/{publicationID} [get]
 func (h *Handler) HandleGetPublicationByID(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
@@ -80,6 +110,21 @@ func (h *Handler) HandleGetPublicationByID(c *gin.Context) {
 	c.JSON(http.StatusOK, publication)
 }
 
+// HandleUpdatePublication godoc
+// @Summary      Обновить публикацию по ID
+// @Description  Обновляет информацию о публикации по уникальному идентификатору.
+// @Tags         Publications
+// @Accept       json
+// @Produce      json
+// @Param        publicationID  path    int                        true  "Идентификатор публикации"
+// @Param        publication    body    models.UpdatePublicationDTO true  "Обновленные данные публикации"
+// @Security BearerAuth
+// @Success      200            {object}  models.Publication   "Обновленная публикация"
+// @Failure      400            {object}  gin.H  "Неверный формат данных"
+// @Failure      401            {object}  gin.H  "Неверные учетные данные"
+// @Failure      404            {object}  gin.H  "Публикация не найдена"
+// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Router       /publications/{publicationID} [put]
 func (h *Handler) HandleUpdatePublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
@@ -112,6 +157,21 @@ func (h *Handler) HandleUpdatePublication(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedPublication)
 }
 
+// HandleFormPublication godoc
+// @Summary      Перевести публикацию в статус работы
+// @Description  Переводит черновик публикации в статус работы.
+// @Tags         Publications
+// @Accept       json
+// @Produce      json
+// @Param        publicationID  path    int  true  "Идентификатор публикации"
+// @Security BearerAuth
+// @Success      200            {object}  models.Publication   "Публикация в статусе работы"
+// @Failure      400            {object}  gin.H  "Неверный формат ID публикации"
+// @Failure      401            {object}  gin.H  "Неверные учетные данные"
+// @Failure      403            {object}  gin.H  "Недостаточно прав"
+// @Failure      404            {object}  gin.H  "Публикация не найдена"
+// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Router       /publications/{publicationID}/form [post]
 func (h *Handler) HandleFormPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
@@ -149,6 +209,23 @@ func (h *Handler) HandleFormPublication(c *gin.Context) {
 	c.JSON(http.StatusOK, publication)
 }
 
+// HandleFinalizedPublication godoc
+// @Summary      Завершить публикацию
+// @Description  Переводит публикацию в финальный статус.
+// @Tags         Publications
+// @Accept       json
+// @Produce      json
+// @Param        publicationID  path    int  true  "Идентификатор публикации"
+// @Param        status         query   string  true  "Статус публикации"
+// @Security BearerAuth
+// @Success      200            {object}  models.Publication   "Завершенная публикация"
+// @Failure      400            {object}  gin.H  "Неверный формат данных"
+// @Failure      401            {object}  gin.H  "Неверные учетные данные"
+// @Failure 	 403 	  {object}  gin.H  "Недостаточно прав"
+// @Failure      404            {object}  gin.H  "Публикация не найдена"
+// @Failure      409            {object}  gin.H  "Неверный статус для завершения публикации"
+// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Router       /publications/{publicationID}/finalize [post]
 func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
@@ -184,6 +261,20 @@ func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 	c.JSON(http.StatusOK, publication)
 }
 
+// HandleDeletePublication godoc
+// @Summary      Удалить публикацию по ID
+// @Description  Удаляет публикацию по уникальному идентификатору.
+// @Tags         Publications
+// @Accept       json
+// @Produce      json
+// @Param        publicationID  path    int  true  "Идентификатор публикации"
+// @Security BearerAuth
+// @Success      204            {object}  nil   "Публикация успешно удалена"
+// @Failure      400            {object}  gin.H  "Неверный формат ID публикации"
+// @Failure      401            {object}  gin.H  "Неверные учетные данные"
+// @Failure      404            {object}  gin.H  "Публикация не найдена"
+// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Router       /publications/{publicationID} [delete]
 func (h *Handler) HandleDeletePublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {

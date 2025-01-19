@@ -24,7 +24,8 @@ type PostgresRepo interface {
 	UpdateEventPriority(userID int, publicationID, eventID int, priority int) error
 	CreateUser(user *models.RegisterUserDTO) (*models.User, error)
 	AuthenticateUser(email, password string) (*models.User, error)
-	UpdateUser(userID int, updateData *models.UpdateUserDTO) (*models.User, error)
+	UpdateUser(id int, updateData *models.UpdateUserDTO) (*models.User, error)
+	GetUserByID(id int) (*models.User, error)
 }
 
 type RedisRepo interface {

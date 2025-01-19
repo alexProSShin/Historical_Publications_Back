@@ -26,6 +26,11 @@ type LoginUserDTO struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type LoginResponseDTO struct {
+	Token string `json:"token"`
+	User
+}
+
 type UpdateUserDTO struct {
 	Name     string `json:"name"`
 	Email    string `json:"email" binding:"omitempty,email"`
