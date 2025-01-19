@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Исторические события</title>
+    <link rel="stylesheet" href="/css/index.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="/" class="navbar__logo-href">
+        <h1 class="navbar__logo">Историус</h1>
+      </a>
+      <a href="{{if .publicationId}}/publications/{{.publicationId}}{{else}}#{{end}}" class="publication-link">
+        <img src="/images/publication.svg" alt="" class="publication-icon {{if .publicationId}}active{{end}}" />
+        {{ if .eventsCount }}
+          <span class="event-count">{{ .eventsCount }}</span>
+        {{ end }}
+      </a>
+    </nav>
+       <div class="event_page">
+        <div class="event_page__head">
+          <div class="event_page__head__image_block">
+            <img src="{{.event.PhotoURL}}" alt="" class="image-round" />
+          </div>
+          <div class="event_page__head__main">
+            <p>{{.event.EventType}}</p>
+            <p class="heading">{{.event.Title}}</p>
+            <p>{{.event.Description}}</p>
+          </div>
+        </div>
+        <div class="event_page__content">
+          <ul class="event_page__content__list">
+            <li>
+              <p>
+                <span class="event_page__content__list__key">Название:</span>
+                {{.event.Title}}
+              </p>
+            </li>
+            <li>
+              <p>
+                <span class="event_page__content__list__key info">Информация: </span>
+                {{.event.Info}}
+              </p>
+            </li>
+            <li>
+              <p>
+                <span class="event_page__content__list__key">Источник:</span> {{.event.Source}}
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+  </body>
+</html>

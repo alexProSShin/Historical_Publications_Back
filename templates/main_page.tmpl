@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Исторические события</title>
+    <link rel="stylesheet" href="/css/index.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="/" class="navbar__logo-href">
+        <h1 class="navbar__logo">Историус</h1>
+      </a>
+      <a href="{{if .publicationId}}/publications/{{.publicationId}}{{else}}#{{end}}" class="publication-link">
+        <img src="/images/publication.svg" alt="" class="publication-icon {{if .publicationId}}active{{end}}" />
+        {{ if .eventsCount }}
+          <span class="event-count">{{ .eventsCount }}</span>
+        {{ end }}
+      </a>
+    </nav>
+      <div class="search__block">
+        <form action="/" method="GET">
+          <button class="icon-btn" type="submit">
+            <img src="/images/search.svg" alt="Поиск" class="search-icon" />
+          </button>
+          <input
+            class="search__input"
+            name="title"
+            value="{{.searchValue}}"
+            placeholder="Найти место, событие или личность"
+          />
+        </form>
+      </div>
+
+      <div class="grid-container">
+          {{ range .events}}
+            <div class="grid-item">
+              <div class="event_card">
+                <a class="event_card_href" href="/events/{{.ID}}">
+                  <img class="event_card_image image-arch" src="{{.PhotoURL}}" alt="" />
+                </a>
+                <p class="event_card__caption">{{.EventType}}</p>
+                <p class="heading event_card__title">{{.Title}}</p>
+                <p class="event_card__description">
+                  {{.Description}}
+                </p>
+                <form action="/events/{{.ID}}/publications" method="POST">
+                    <input type="hidden" name="event_id" value="{{.ID}}" />
+              <button type="submit" class="button-primary event_card__button">Добавить</button>
+                </form>
+              </div>
+            </div>
+          {{ else }}
+            <p>События не найдены.</p>
+          {{ end }}
+      </div>
+  </body>
+</html>

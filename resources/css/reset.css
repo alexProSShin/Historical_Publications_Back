@@ -1,0 +1,29 @@
+/* reset */
+
+html,
+body {
+  overflow: hidden;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
