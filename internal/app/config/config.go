@@ -11,8 +11,15 @@ import (
 )
 
 type Config struct {
-	ServiceHost string
-	ServicePort int
+	ServiceHost    string
+	ServicePort    int
+	MinioEndpoint  string
+	MinioBucket    string
+	MinioAccessKey string
+	MinioSecretKey string
+	RedisAddr      string
+	RedisPassword  string
+	RedisDB        int
 }
 
 func NewConfig(ctx context.Context) (*Config, error) {

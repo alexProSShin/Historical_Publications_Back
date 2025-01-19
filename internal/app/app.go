@@ -6,13 +6,15 @@ import (
 )
 
 type Application struct {
-	Config     *config.Config
-	Repository repository.Repository
+	Config       *config.Config
+	PostgresRepo repository.PostgresRepo
+	RedisRepo    repository.RedisRepo
 }
 
-func New(cfg *config.Config, repo repository.Repository) (*Application, error) {
+func New(cfg *config.Config, postgresRepo repository.PostgresRepo, redisRepo repository.RedisRepo) (*Application, error) {
 	return &Application{
-		Config:     cfg,
-		Repository: repo,
+		Config:       cfg,
+		PostgresRepo: postgresRepo,
+		RedisRepo:    redisRepo,
 	}, nil
 }

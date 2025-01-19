@@ -15,6 +15,22 @@ const (
 	DeletedEventStatus = "удалено"
 )
 
+type CreateEventDTO struct {
+	Title       string    `json:"title"`       // Название события
+	EventType   EventType `json:"event_type"`  // тип события: локация, событие, артефакт
+	Description string    `json:"description"` // Краткое описание события
+	Info        string    `json:"info"`        // информация о событии
+	Source      *string   `json:"source"`      // Источник информации об этом событии
+}
+
+type UpdateEventDTO struct {
+	Title       string    `json:"title"`       // Название события
+	EventType   EventType `json:"event_type"`  // тип события: локация, событие, артефакт
+	Description string    `json:"description"` // Краткое описание события
+	Info        string    `json:"info"`        // информация о событии
+	Source      *string   `json:"source"`      // Источник информации об этом событии
+}
+
 type HistoricalEvent struct {
 	ID          int         `gorm:"primarykey" json:"id"`          // Уникальный идентификатор события
 	Status      EventStatus `gorm:"default:активно" json:"status"` // Установлен статус по умолчанию
@@ -29,4 +45,5 @@ type HistoricalEvent struct {
 type GetEventsDTO struct {
 	HistoricalEvents []HistoricalEvent `json:"historical_events"`
 	PublicationID    int               `json:"publications_id"`
+	EventsCount      int               `json:"events_count"`
 }

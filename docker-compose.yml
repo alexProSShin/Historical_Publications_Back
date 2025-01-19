@@ -46,12 +46,26 @@ services: # имеджи, которые запустятся по вашему 
     networks:
       - minio-network
 
+  redis:
+    container_name: redisCache
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - redis-network
+
 volumes: # часть настроек для хранения данных
   postgresdb-data:
     driver: local
   minio-data:
     driver: local
+  redis-data:
+    driver: local
 
 networks:
   minio-network:
+    driver: bridge
+  redis-network:
     driver: bridge

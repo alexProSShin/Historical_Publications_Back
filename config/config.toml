@@ -1,2 +1,9 @@
 ServiceHost = "0.0.0.0"
 ServicePort = 8080
+MinioEndpoint = "localhost:9000"
+MinioBucket = "events"
+MinioAccessKey = "rip"
+MinioSecretKey = "12345678"
+RedisAddr = "localhost:6379"
+RedisPassword = ""
+RedisDB = 0

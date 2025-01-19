@@ -12,6 +12,10 @@ const (
 	DeletedPublicationStatus   = "удален"
 )
 
+type UpdatePublicationDTO struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
 type Publication struct {
 	ID             int               `gorm:"primarykey" json:"id"`
 	Title          string            `gorm:"default:Черновая публикация" json:"title"`                    // Название публикации (исторического события)
