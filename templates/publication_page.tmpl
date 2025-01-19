@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Исторические события</title>
+    <link rel="stylesheet" href="/css/index.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="/" class="navbar__logo-href">
+        <h1 class="navbar__logo">Историус</h1>
+      </a>
+      <a href="{{if .publication.ID}}/publications/{{.publication.ID}}{{else}}#{{end}}" class="publication-link">
+        <img src="/images/publication.svg" alt="" class="publication-icon {{ if .publication.ID }}active{{end}}" />
+        {{ if .eventsCount }}
+          <span class="event-count">{{ .eventsCount }}</span>
+        {{ end }}
+      </a>
+    </nav>
+      <div class="publication_page">
+        <p class="heading publication_page__title">{{.publication.Title}}</p>
+        <p class="publication_page__info">
+          {{.publication.Description}}
+        </p>
+        <div class="publication_page__date">
+          <p>Дата создания: <span>{{.publication.CreationDate}}</span></p>
+        </div>
+        <div class="publication_page__events-wrapper">
+          {{range .publication.Events}}
+            <div class="publication_page__event">
+              <a class="event_card_href" href="/events/{{.ID}}">
+                <img src="{{.PhotoURL}}" alt="" class="image-round publication_page__event__image" />
+              </a>
+              <div class="publication_page__event__text-wrapper">
+                <p class="heading">{{.Title}}</p>
+                <p>{{.Description}}</p>
+              </div>
+            </div>
+          {{end}}
+        </div>
+      </div>
+  </body>
+</html>

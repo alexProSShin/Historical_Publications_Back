@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  minio:
+    container_name: s3Minio
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: rip
+      MINIO_SECRET_KEY: 12345678
+      MINIO_CONSOLE_ADDRESS: ":9001"
+    volumes:
+      - minio-data:/data
+      - ./migrations/minio:/migration
+    command: minio server /data --console-address ":9001"
+    networks:
+      - minio-network
+
+  minio-client:
+    container_name: s3MinioClient
+    image: minio/mc:latest
+    entrypoint: >
+      sh -c "until mc alias set myminio http://minio:9000 rip 12345678; do sleep 1; done && \
+      mc mb myminio/events && \
+      mc policy set public myminio/events && \
+      mc cp /migration/events/* myminio/events/"
+    depends_on:
+      - minio
+    volumes:
+      - ./migrations/minio:/migration
+    networks:
+      - minio-network
+
+volumes:
+  minio-data:
+    driver: local
+
+networks:
+  minio-network:
+    driver: bridge
