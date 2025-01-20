@@ -3,9 +3,11 @@ package app
 import (
 	"backend/internal/app/handlers"
 	"backend/internal/middleware"
+	"backend/internal/middleware/cors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (app *Application) Run() {
@@ -13,6 +15,14 @@ func (app *Application) Run() {
 
 	h := handlers.New(app.PostgresRepo, app.RedisRepo)
 	app.setupRoutes(r, h)
+	r.Use(cors.New(cors.CORSOptions{
+		AllowedOrigins:   []string{"http://localhost:3000", "https://your-production-domain.com"}, // Укажите конкретные домены
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization", "X-Requested-With"},
+		ExposedHeaders:   []string{"Content-Disposition", "X-Total-Count"},
+		AllowCredentials: true,
+		MaxAge:           86400,
+	}))
 
 	addr := fmt.Sprintf("%s:%d", app.Config.ServiceHost, app.Config.ServicePort)
 	if err := r.Run(addr); err != nil {
