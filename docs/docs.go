@@ -55,13 +55,13 @@ const docTemplate = `{
                     "404": {
                         "description": "События не найдены",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -104,25 +104,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат данных",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Недостаточно прав",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -160,19 +160,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID события",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Событие не найдено",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -222,37 +222,37 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат данных",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Недостаточно прав",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Событие не найдено",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Событие уже удалено",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -290,37 +290,37 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID события",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Недостаточно прав",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Событие не найдено",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Событие уже удалено",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -367,31 +367,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID события или файла",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Недостаточно прав",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Событие не найдено",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -440,31 +440,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID события или данных приоритета",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Черновик публикации не найден",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Публикация уже удалена",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -504,25 +504,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID события",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Событие или черновик публикации не найдено",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -560,25 +560,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID события",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Событие или публикация не найдены",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -635,25 +635,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат параметров",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Публикации не найдены",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -696,25 +696,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID публикации",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Публикация не найдена",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -764,25 +764,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат данных",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Публикация не найдена",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -820,25 +820,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID публикации",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Публикация не найдена",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -888,37 +888,37 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат данных",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Недостаточно прав",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Публикация не найдена",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Неверный статус для завершения публикации",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -961,31 +961,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID публикации",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Недостаточно прав",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Публикация не найдена",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -1025,19 +1025,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверные данные запроса",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -1068,13 +1068,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Неавторизованный пользователь",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -1114,19 +1114,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверные данные запроса",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Пользователь уже существует",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -1171,19 +1171,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверные данные запроса",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неавторизованный пользователь",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/resp.ErrorResponse"
                         }
                     }
                 }
@@ -1191,10 +1191,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "gin.H": {
-            "type": "object",
-            "additionalProperties": {}
-        },
         "models.CreateEventDTO": {
             "type": "object",
             "properties": {
@@ -1482,6 +1478,34 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "resp.ErrorDetail": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "description": "Поле, связанное с ошибкой",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "Сообщение об ошибке",
+                    "type": "string"
+                }
+            }
+        },
+        "resp.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "description": "Детали ошибок",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/resp.ErrorDetail"
+                    }
+                },
+                "meta": {
+                    "description": "Метаданные (опционально)"
                 }
             }
         }

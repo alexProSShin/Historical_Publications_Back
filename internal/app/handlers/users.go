@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal/lib/api/resp"
 	"backend/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -42,39 +43,39 @@ func (h *Handler) saveTokenToRedis(token string, userID int) error {
 // @Produce      json
 // @Param        user  body    models.RegisterUserDTO  true  "Данные пользователя"
 // @Success      201  {object}  models.LoginResponseDTO
-// @Failure      400  {object}  gin.H  "Неверные данные запроса"
-// @Failure      409  {object}  gin.H  "Пользователь уже существует"
-// @Failure      500  {object}  gin.H  "Внутренняя ошибка сервера"
+// @Failure      400  {object}  resp.ErrorResponse   "Неверные данные запроса"
+// @Failure      409  {object}  resp.ErrorResponse   "Пользователь уже существует"
+// @Failure      500  {object}  resp.ErrorResponse   "Внутренняя ошибка сервера"
 // @Router       /users/register [post]
 func (h *Handler) HandleRegisterUser(c *gin.Context) {
 	var user models.RegisterUserDTO
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request data"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("request_body", err.Error()), nil)
 		return
 	}
 
 	newUser, err := h.repo.CreateUser(&user)
 	if err != nil {
 		if errors.Is(err, models.ErrUserAlreadyExists) {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusConflict, resp.SingleError(err.Error()), nil)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		}
 		return
 	}
 
 	token, err := generateJWT(newUser.ID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	if err = h.saveTokenToRedis(token, newUser.ID); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
-	c.JSON(http.StatusCreated, models.LoginResponseDTO{
+	resp.WriteJSON(c.Writer, http.StatusCreated, models.LoginResponseDTO{
 		Token: token,
 		User:  *newUser,
 	})
@@ -88,39 +89,39 @@ func (h *Handler) HandleRegisterUser(c *gin.Context) {
 // @Produce      json
 // @Param        credentials  body    models.LoginUserDTO  true  "Данные для входа"
 // @Success      200          {object}  models.LoginResponseDTO
-// @Failure      400          {object}  gin.H  "Неверные данные запроса"
-// @Failure      401          {object}  gin.H  "Неверные учетные данные"
-// @Failure      500          {object}  gin.H  "Внутренняя ошибка сервера"
+// @Failure      400          {object}  resp.ErrorResponse   "Неверные данные запроса"
+// @Failure      401          {object}  resp.ErrorResponse   "Неверные учетные данные"
+// @Failure      500          {object}  resp.ErrorResponse   "Внутренняя ошибка сервера"
 // @Router       /users/login [post]
 func (h *Handler) HandleLoginUser(c *gin.Context) {
 	var credentials models.LoginUserDTO
 	if err := c.ShouldBindJSON(&credentials); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request data"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("request_body", err.Error()), nil)
 		return
 	}
 
 	user, err := h.repo.AuthenticateUser(credentials.Email, credentials.Password)
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		}
 		return
 	}
 
 	token, err := generateJWT(user.ID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	if err = h.saveTokenToRedis(token, user.ID); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
-	c.JSON(http.StatusCreated, models.LoginResponseDTO{
+	resp.WriteJSON(c.Writer, http.StatusCreated, models.LoginResponseDTO{
 		Token: token,
 		User:  *user,
 	})
@@ -133,23 +134,23 @@ func (h *Handler) HandleLoginUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Security BearerAuth
-// @Success      204  {object}  nil
-// @Failure      401  {object}  gin.H  "Неавторизованный пользователь"
-// @Failure      500  {object}  gin.H  "Внутренняя ошибка сервера"
+// @Success      204
+// @Failure      401  {object}  resp.ErrorResponse   "Неавторизованный пользователь"
+// @Failure      500  {object}  resp.ErrorResponse   "Внутренняя ошибка сервера"
 // @Router       /users/logout [post]
 func (h *Handler) HandleLogoutUser(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	if err = h.redis.Delete("user:" + strconv.Itoa(userID)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	resp.WriteJSON(c.Writer, http.StatusNoContent, nil)
 }
 
 // HandleUpdateUser godoc
@@ -161,30 +162,30 @@ func (h *Handler) HandleLogoutUser(c *gin.Context) {
 // @Param        updateData  body    models.UpdateUserDTO  true  "Данные для обновления"
 // @Security BearerAuth
 // @Success      200         {object}  models.User  "Обновленный пользователь"
-// @Failure      400         {object}  gin.H  "Неверные данные запроса"
-// @Failure      401         {object}  gin.H  "Неавторизованный пользователь"
-// @Failure      500         {object}  gin.H  "Внутренняя ошибка сервера"
+// @Failure      400         {object}  resp.ErrorResponse   "Неверные данные запроса"
+// @Failure      401         {object}  resp.ErrorResponse   "Неавторизованный пользователь"
+// @Failure      500         {object}  resp.ErrorResponse   "Внутренняя ошибка сервера"
 // @Router       /users/update [put]
 func (h *Handler) HandleUpdateUser(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	var updateData models.UpdateUserDTO
 	if err := c.ShouldBindJSON(&updateData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request data"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("request_body", err.Error()), nil)
 		return
 	}
 
 	updatedUser, err := h.repo.UpdateUser(userID, &updateData)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedUser)
+	resp.WriteJSON(c.Writer, http.StatusOK, updatedUser)
 }
 
 func (h *Handler) GetUserByID(userID int) (*models.User, error) {

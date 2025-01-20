@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"backend/internal/app/repository"
+	"backend/internal/lib/api/resp"
 	"backend/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -42,7 +43,7 @@ func AuthMiddleware(redisRepo repository.RedisRepo) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
+			resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError("authorization header is required"), nil)
 			c.Abort()
 			return
 		}
@@ -56,14 +57,14 @@ func AuthMiddleware(redisRepo repository.RedisRepo) gin.HandlerFunc {
 
 		userID, err := parseJWT(tokenString)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid or expired token"})
+			resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError("invalid or expired token"), nil)
 			c.Abort()
 			return
 		}
 
 		redisToken, err := redisRepo.Get("user:" + strconv.Itoa(userID))
 		if err != nil || redisToken != tokenString {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "token is invalid or revoked"})
+			resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError("token is invalid or revoked"), nil)
 			c.Abort()
 			return
 		}
@@ -77,14 +78,14 @@ func RequireModeratorRole(getUser func(int) (*models.User, error)) gin.HandlerFu
 	return func(c *gin.Context) {
 		userID, exists := c.Get("userID")
 		if !exists {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in context"})
+			resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError("user ID not found in context"), nil)
 			c.Abort()
 			return
 		}
 
 		user, err := getUser(userID.(int))
 		if err != nil || user.Role != models.RoleModerator {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Access denied: Moderator role required"})
+			resp.WriteError(c.Writer, http.StatusForbidden, resp.SingleError("access denied: Moderator role required"), nil)
 			c.Abort()
 			return
 		}

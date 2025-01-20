@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal/lib/api/resp"
 	"backend/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -16,38 +17,38 @@ import (
 // @Produce      json
 // @Param        eventID  path    int  true  "Идентификатор события"
 // @Security BearerAuth
-// @Success      204      {object}  nil
-// @Failure      400      {object}  gin.H  "Неверный формат ID события"
-// @Failure      401      {object}  gin.H  "Неверные учетные данные"
-// @Failure      404      {object}  gin.H  "Событие или публикация не найдены"
-// @Failure      500      {object}  gin.H  "Внутренняя ошибка сервера"
+// @Success      204
+// @Failure      400      {object}  resp.ErrorResponse   "Неверный формат ID события"
+// @Failure      401      {object}  resp.ErrorResponse   "Неверные учетные данные"
+// @Failure      404      {object}  resp.ErrorResponse   "Событие или публикация не найдены"
+// @Failure      500      {object}  resp.ErrorResponse   "Внутренняя ошибка сервера"
 // @Router       /events/{eventID}/publications [delete]
 func (h *Handler) HandleRemoveEventFromPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.ErrorDetailList("error", err.Error()), nil)
 		return
 	}
 
 	eventID, err := strconv.Atoi(c.Param("eventID"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("eventID", "invalid event ID"), nil)
 		return
 	}
 
 	err = h.repo.RemoveEventFromPublication(userID, eventID)
 	if err != nil {
 		if errors.Is(err, models.ErrEventNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
 		} else if errors.Is(err, models.ErrPublicationNotFound) {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusConflict, resp.SingleError(err.Error()), nil)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		}
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	resp.WriteJSON(c.Writer, http.StatusNoContent, nil)
 }
 
 // HandleUpdateEventPriority godoc
@@ -59,47 +60,47 @@ func (h *Handler) HandleRemoveEventFromPublication(c *gin.Context) {
 // @Param        eventID  path    int                   true  "Идентификатор события"
 // @Param        priority body    models.UpdateEventPriority  true  "Новый приоритет события"
 // @Security BearerAuth
-// @Success      200      {object}  nil
-// @Failure      400      {object}  gin.H  "Неверный формат ID события или данных приоритета"
-// @Failure      401      {object}  gin.H  "Неверные учетные данные"
-// @Failure      404      {object}  gin.H  "Черновик публикации не найден"
-// @Failure      409      {object}  gin.H  "Публикация уже удалена"
-// @Failure      500      {object}  gin.H  "Внутренняя ошибка сервера"
+// @Success      200
+// @Failure      400      {object}  resp.ErrorResponse   "Неверный формат ID события или данных приоритета"
+// @Failure      401      {object}  resp.ErrorResponse   "Неверные учетные данные"
+// @Failure      404      {object}  resp.ErrorResponse   "Черновик публикации не найден"
+// @Failure      409      {object}  resp.ErrorResponse   "Публикация уже удалена"
+// @Failure      500      {object}  resp.ErrorResponse   "Внутренняя ошибка сервера"
 // @Router       /events/{eventID}/priority [put]
 func (h *Handler) HandleUpdateEventPriority(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.ErrorDetailList("error", err.Error()), nil)
 		return
 	}
 
 	eventID, err := strconv.Atoi(c.Param("eventID"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid event ID"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("eventID", "invalid event ID"), nil)
 		return
 	}
 
 	var priority models.UpdateEventPriority
 	if err = c.ShouldBindJSON(&priority); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("request_body", err.Error()), nil)
 		return
 	}
 
 	draftPublication, _ := h.repo.GetDraftPublication(userID)
 	if draftPublication == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError("draft publication not found"), nil)
 		return
 	}
 
 	err = h.repo.UpdateEventPriority(userID, draftPublication.ID, eventID, priority.Priority)
 	if err != nil {
 		if errors.Is(err, models.ErrPublicationNotFound) {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusConflict, resp.SingleError(err.Error()), nil)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, nil)
+	resp.WriteJSON(c.Writer, http.StatusOK, nil)
 }

@@ -1,7 +1,4 @@
 definitions:
-  gin.H:
-    additionalProperties: {}
-    type: object
   models.CreateEventDTO:
     properties:
       description:
@@ -197,6 +194,25 @@ definitions:
       user_id:
         type: integer
     type: object
+  resp.ErrorDetail:
+    properties:
+      field:
+        description: Поле, связанное с ошибкой
+        type: string
+      message:
+        description: Сообщение об ошибке
+        type: string
+    type: object
+  resp.ErrorResponse:
+    properties:
+      errors:
+        description: Детали ошибок
+        items:
+          $ref: '#/definitions/resp.ErrorDetail'
+        type: array
+      meta:
+        description: Метаданные (опционально)
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -232,11 +248,11 @@ paths:
         "404":
           description: События не найдены
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       summary: Получить список событий
       tags:
       - Events
@@ -261,19 +277,19 @@ paths:
         "400":
           description: Неверный формат данных
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "403":
           description: Недостаточно прав
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Добавить новое событие
@@ -298,27 +314,27 @@ paths:
         "400":
           description: Неверный формат ID события
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "403":
           description: Недостаточно прав
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Событие не найдено
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "409":
           description: Событие уже удалено
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Удалить событие по ID
@@ -344,15 +360,15 @@ paths:
         "400":
           description: Неверный формат ID события
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Событие не найдено
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       summary: Получить событие по ID
       tags:
       - Events
@@ -382,27 +398,27 @@ paths:
         "400":
           description: Неверный формат данных
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "403":
           description: Недостаточно прав
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Событие не найдено
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "409":
           description: Событие уже удалено
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Обновить событие по ID
@@ -432,23 +448,23 @@ paths:
         "400":
           description: Неверный формат ID события или файла
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "403":
           description: Недостаточно прав
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Событие не найдено
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Добавить изображение к событию
@@ -479,23 +495,23 @@ paths:
         "400":
           description: Неверный формат ID события или данных приоритета
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Черновик публикации не найден
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "409":
           description: Публикация уже удалена
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Обновить приоритет события
@@ -520,19 +536,19 @@ paths:
         "400":
           description: Неверный формат ID события
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Событие или публикация не найдены
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Удалить событие из публикации
@@ -556,19 +572,19 @@ paths:
         "400":
           description: Неверный формат ID события
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Событие или черновик публикации не найдено
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Добавить событие в публикацию
@@ -605,19 +621,19 @@ paths:
         "400":
           description: Неверный формат параметров
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Публикации не найдены
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Получить список публикаций
@@ -642,19 +658,19 @@ paths:
         "400":
           description: Неверный формат ID публикации
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Публикация не найдена
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Удалить публикацию по ID
@@ -680,19 +696,19 @@ paths:
         "400":
           description: Неверный формат ID публикации
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Публикация не найдена
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Получить публикацию по ID
@@ -724,19 +740,19 @@ paths:
         "400":
           description: Неверный формат данных
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Публикация не найдена
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Обновить публикацию по ID
@@ -768,27 +784,27 @@ paths:
         "400":
           description: Неверный формат данных
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "403":
           description: Недостаточно прав
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Публикация не найдена
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "409":
           description: Неверный статус для завершения публикации
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Завершить публикацию
@@ -815,23 +831,23 @@ paths:
         "400":
           description: Неверный формат ID публикации
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "403":
           description: Недостаточно прав
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "404":
           description: Публикация не найдена
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Перевести публикацию в статус работы
@@ -860,15 +876,15 @@ paths:
         "400":
           description: Неверные данные запроса
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       summary: Вход пользователя
       tags:
       - Auth
@@ -885,11 +901,11 @@ paths:
         "401":
           description: Неавторизованный пользователь
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Выход пользователя
@@ -917,15 +933,15 @@ paths:
         "400":
           description: Неверные данные запроса
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "409":
           description: Пользователь уже существует
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       summary: Регистрация нового пользователя
       tags:
       - Auth
@@ -951,15 +967,15 @@ paths:
         "400":
           description: Неверные данные запроса
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "401":
           description: Неавторизованный пользователь
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/resp.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Обновить информацию о пользователе

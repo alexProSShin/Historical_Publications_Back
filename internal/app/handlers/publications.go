@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal/lib/api/resp"
 	"backend/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -20,15 +21,15 @@ import (
 // @Param        endDate   query    string     false  "Дата окончания (формат: yyyy-mm-dd)"
 // @Security BearerAuth
 // @Success      200      {array}   models.Publication   "Список публикаций"
-// @Failure      400      {object}  gin.H  "Неверный формат параметров"
-// @Failure      401      {object}  gin.H  "Неверные учетные данные"
-// @Failure      404      {object}  gin.H  "Публикации не найдены"
-// @Failure      500      {object}  gin.H  "Внутренняя ошибка сервера"
+// @Failure      400      {object}  resp.ErrorResponse  "Неверный формат параметров"
+// @Failure      401      {object}  resp.ErrorResponse  "Неверные учетные данные"
+// @Failure      404      {object}  resp.ErrorResponse  "Публикации не найдены"
+// @Failure      500      {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
 // @Router       /publications [get]
 func (h *Handler) HandleGetPublications(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		return
 	}
 
@@ -41,7 +42,7 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 	if startDateStr != "" {
 		parsedStartDate, err := time.Parse("2006-01-02", startDateStr)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid start date format"})
+			resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("startDate", err.Error()), nil)
 			return
 		}
 		startDate = &parsedStartDate
@@ -50,7 +51,7 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 	if endDateStr != "" {
 		parsedEndDate, err := time.Parse("2006-01-02", endDateStr)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid end date format"})
+			resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("endDate", err.Error()), nil)
 			return
 		}
 		endDate = &parsedEndDate
@@ -58,16 +59,16 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 
 	publications, err := h.repo.GetPublications(userID, status, startDate, endDate)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	if len(publications) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, publications)
+	resp.WriteJSON(c.Writer, http.StatusOK, publications)
 }
 
 // HandleGetPublicationByID godoc
@@ -79,35 +80,35 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 // @Param        publicationID  path    int  true  "Идентификатор публикации"
 // @Security BearerAuth
 // @Success      200            {object}  models.Publication   "Публикация"
-// @Failure      400            {object}  gin.H  "Неверный формат ID публикации"
-// @Failure      401            {object}  gin.H  "Неверные учетные данные"
-// @Failure      404            {object}  gin.H  "Публикация не найдена"
-// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Failure      400            {object}  resp.ErrorResponse  "Неверный формат ID публикации"
+// @Failure      401            {object}  resp.ErrorResponse  "Неверные учетные данные"
+// @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"
+// @Failure      500            {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
 // @Router       /publications/{publicationID} [get]
 func (h *Handler) HandleGetPublicationByID(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	id, err := strconv.Atoi(c.Param("publicationID"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid publication ID"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("publicationID", err.Error()), nil)
 		return
 	}
 
 	publication, err := h.repo.GetPublicationByID(userID, id)
 	if err != nil {
 		if errors.Is(err, models.ErrPublicationNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "publication not found"})
+			resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, publication)
+	resp.WriteJSON(c.Writer, http.StatusOK, publication)
 }
 
 // HandleUpdatePublication godoc
@@ -120,41 +121,41 @@ func (h *Handler) HandleGetPublicationByID(c *gin.Context) {
 // @Param        publication    body    models.UpdatePublicationDTO true  "Обновленные данные публикации"
 // @Security BearerAuth
 // @Success      200            {object}  models.Publication   "Обновленная публикация"
-// @Failure      400            {object}  gin.H  "Неверный формат данных"
-// @Failure      401            {object}  gin.H  "Неверные учетные данные"
-// @Failure      404            {object}  gin.H  "Публикация не найдена"
-// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Failure      400            {object}  resp.ErrorResponse  "Неверный формат данных"
+// @Failure      401            {object}  resp.ErrorResponse  "Неверные учетные данные"
+// @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"
+// @Failure      500            {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
 // @Router       /publications/{publicationID} [put]
 func (h *Handler) HandleUpdatePublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	id, err := strconv.Atoi(c.Param("publicationID"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid publication ID"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("publicationID", err.Error()), nil)
 		return
 	}
 
 	var publication models.UpdatePublicationDTO
 	if err := c.ShouldBindJSON(&publication); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("request_body", err.Error()), nil)
 		return
 	}
 
 	updatedPublication, err := h.repo.UpdatePublication(userID, id, &publication)
 	if err != nil {
 		if errors.Is(err, models.ErrPublicationNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedPublication)
+	resp.WriteJSON(c.Writer, http.StatusOK, updatedPublication)
 }
 
 // HandleFormPublication godoc
@@ -166,47 +167,47 @@ func (h *Handler) HandleUpdatePublication(c *gin.Context) {
 // @Param        publicationID  path    int  true  "Идентификатор публикации"
 // @Security BearerAuth
 // @Success      200            {object}  models.Publication   "Публикация в статусе работы"
-// @Failure      400            {object}  gin.H  "Неверный формат ID публикации"
-// @Failure      401            {object}  gin.H  "Неверные учетные данные"
-// @Failure      403            {object}  gin.H  "Недостаточно прав"
-// @Failure      404            {object}  gin.H  "Публикация не найдена"
-// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Failure      400            {object}  resp.ErrorResponse  "Неверный формат ID публикации"
+// @Failure      401            {object}  resp.ErrorResponse  "Неверные учетные данные"
+// @Failure      403            {object}  resp.ErrorResponse  "Недостаточно прав"
+// @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"
+// @Failure      500            {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
 // @Router       /publications/{publicationID}/form [post]
 func (h *Handler) HandleFormPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	id, err := strconv.Atoi(c.Param("publicationID"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid publication ID"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("publicationID", err.Error()), nil)
 		return
 	}
 
 	publication, err := h.repo.GetPublicationByID(userID, id)
 	if err != nil {
 		if errors.Is(err, models.ErrPublicationNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		}
 		return
 	}
 
 	if publication.Status != models.DraftPublicationStatus && publication.UserID != userID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "you are not authorized to edit this publication"})
+		resp.WriteError(c.Writer, http.StatusConflict, resp.ErrorDetailList("status", "status is not draft"), nil)
 		return
 	}
 
 	publication, err = h.repo.UpdatePublicationStatus(userID, id, models.WorkPublicationStatus)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, publication)
+	resp.WriteJSON(c.Writer, http.StatusOK, publication)
 }
 
 // HandleFinalizedPublication godoc
@@ -219,23 +220,23 @@ func (h *Handler) HandleFormPublication(c *gin.Context) {
 // @Param        status         query   string  true  "Статус публикации"
 // @Security BearerAuth
 // @Success      200            {object}  models.Publication   "Завершенная публикация"
-// @Failure      400            {object}  gin.H  "Неверный формат данных"
-// @Failure      401            {object}  gin.H  "Неверные учетные данные"
-// @Failure 	 403 	  {object}  gin.H  "Недостаточно прав"
-// @Failure      404            {object}  gin.H  "Публикация не найдена"
-// @Failure      409            {object}  gin.H  "Неверный статус для завершения публикации"
-// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Failure      400            {object}  resp.ErrorResponse  "Неверный формат данных"
+// @Failure      401            {object}  resp.ErrorResponse  "Неверные учетные данные"
+// @Failure 	 403 	  {object}  resp.ErrorResponse  "Недостаточно прав"
+// @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"
+// @Failure      409            {object}  resp.ErrorResponse  "Неверный статус для завершения публикации"
+// @Failure      500            {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
 // @Router       /publications/{publicationID}/finalize [post]
 func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	id, err := strconv.Atoi(c.Param("publicationID"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid publication ID"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("publicationID", err.Error()), nil)
 		return
 	}
 
@@ -243,22 +244,22 @@ func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 
 	publication, err := h.repo.GetPublicationByID(userID, id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	if publication.Status != models.WorkPublicationStatus {
-		c.JSON(http.StatusConflict, gin.H{"error": "invalid publication status for finalization"})
+		resp.WriteError(c.Writer, http.StatusConflict, resp.ErrorDetailList("status", "status is not work"), nil)
 		return
 	}
 
 	publication, err = h.repo.UpdatePublicationStatus(userID, id, status)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, publication)
+	resp.WriteJSON(c.Writer, http.StatusOK, publication)
 }
 
 // HandleDeletePublication godoc
@@ -269,34 +270,34 @@ func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 // @Produce      json
 // @Param        publicationID  path    int  true  "Идентификатор публикации"
 // @Security BearerAuth
-// @Success      204            {object}  nil   "Публикация успешно удалена"
-// @Failure      400            {object}  gin.H  "Неверный формат ID публикации"
-// @Failure      401            {object}  gin.H  "Неверные учетные данные"
-// @Failure      404            {object}  gin.H  "Публикация не найдена"
-// @Failure      500            {object}  gin.H  "Внутренняя ошибка сервера"
+// @Success      204            "Публикация успешно удалена"
+// @Failure      400            {object}  resp.ErrorResponse  "Неверный формат ID публикации"
+// @Failure      401            {object}  resp.ErrorResponse  "Неверные учетные данные"
+// @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"
+// @Failure      500            {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
 // @Router       /publications/{publicationID} [delete]
 func (h *Handler) HandleDeletePublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
 		return
 	}
 
 	id, err := strconv.Atoi(c.Param("publicationID"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid publication ID"})
+		resp.WriteError(c.Writer, http.StatusBadRequest, resp.ErrorDetailList("publicationID", err.Error()), nil)
 		return
 	}
 
 	err = h.repo.DeletePublication(userID, id)
 	if err != nil {
 		if errors.Is(err, models.ErrPublicationNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		}
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	resp.WriteJSON(c.Writer, http.StatusNoContent, nil)
 }
