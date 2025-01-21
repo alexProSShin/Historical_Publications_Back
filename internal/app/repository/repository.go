@@ -142,7 +142,7 @@ func (r *PostgresRepository) GetDraftPublication() (*models.GetPublicationDTO, e
 
 func (r *PostgresRepository) GetPublicationByID(id int) (*models.GetPublicationDTO, error) {
 	var publication models.Publication
-	err := r.db.First(&publication, "id = ?", id).Error
+	err := r.db.First(&publication, "id = ? AND status != ?", id, models.DeletedPublicationStatus).Error
 	if err != nil {
 		return nil, errors.Wrapf(err, "не удалось получить публикацию с id %d", id)
 	}
