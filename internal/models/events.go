@@ -16,34 +16,34 @@ const (
 )
 
 type CreateEventDTO struct {
-	Title       string    `json:"title"`       // Название события
-	EventType   EventType `json:"event_type"`  // тип события: локация, событие, артефакт
-	Description string    `json:"description"` // Краткое описание события
-	Info        string    `json:"info"`        // информация о событии
-	Source      *string   `json:"source"`      // Источник информации об этом событии
+	Title       string    `json:"title" binding:"required"`       // Название события
+	EventType   EventType `json:"event_type" binding:"required"`  // тип события: локация, событие, артефакт
+	Description string    `json:"description" binding:"required"` // Краткое описание события
+	Info        string    `json:"info" binding:"required"`        // информация о событии
+	Source      *string   `json:"source" binding:"omitempty"`     // Источник информации об этом событии
 }
 
 type UpdateEventDTO struct {
-	Title       string    `json:"title"`       // Название события
-	EventType   EventType `json:"event_type"`  // тип события: локация, событие, артефакт
-	Description string    `json:"description"` // Краткое описание события
-	Info        string    `json:"info"`        // информация о событии
-	Source      *string   `json:"source"`      // Источник информации об этом событии
+	Title       string    `json:"title" binding:"omitempty"`       // Название события
+	EventType   EventType `json:"event_type" binding:"omitempty"`  // тип события: локация, событие, артефакт
+	Description string    `json:"description" binding:"omitempty"` // Краткое описание события
+	Info        string    `json:"info" binding:"omitempty"`        // информация о событии
+	Source      *string   `json:"source" binding:"omitempty"`      // Источник информации об этом событии
 }
 
 type HistoricalEvent struct {
-	ID          int         `gorm:"primarykey" json:"id"`          // Уникальный идентификатор события
-	Status      EventStatus `gorm:"default:активно" json:"status"` // Установлен статус по умолчанию
-	Title       string      `json:"title"`                         // Название события
-	EventType   EventType   `json:"event_type"`                    // тип события: локация, событие, артефакт
-	Description string      `json:"description"`                   // Краткое описание события
-	Info        string      `json:"info"`                          // информация о событии
-	PhotoURL    *string     `json:"photo_url"`                     // URL фотографии, связанной с событием
-	Source      *string     `json:"source"`                        // Источник информации об этом событии
+	ID          int         `gorm:"primarykey" json:"id" binding:"required"`          // Уникальный идентификатор события
+	Status      EventStatus `gorm:"default:активно" json:"status" binding:"required"` // Установлен статус по умолчанию
+	Title       string      `json:"title" binding:"required"`                         // Название события
+	EventType   EventType   `json:"event_type" binding:"required"`                    // тип события: локация, событие, артефакт
+	Description string      `json:"description" binding:"required"`                   // Краткое описание события
+	Info        string      `json:"info" binding:"required"`                          // информация о событии
+	PhotoURL    *string     `json:"photo_url" binding:"omitempty"`                    // URL фотографии, связанной с событием
+	Source      *string     `json:"source" binding:"omitempty"`                       // Источник информации об этом событии
 }
 
 type GetEventsDTO struct {
-	HistoricalEvents []HistoricalEvent `json:"historical_events"`
-	PublicationID    int               `json:"publications_id"`
-	EventsCount      int               `json:"events_count"`
+	HistoricalEvents []HistoricalEvent `json:"historical_events" binding:"omitempty"`
+	PublicationID    int               `json:"publications_id" binding:"required"`
+	EventsCount      int               `json:"events_count" binding:"required"`
 }

@@ -17,6 +17,11 @@ definitions:
       title:
         description: Название события
         type: string
+    required:
+    - description
+    - event_type
+    - info
+    - title
     type: object
   models.EventType:
     enum:
@@ -38,6 +43,9 @@ definitions:
         type: array
       publications_id:
         type: integer
+    required:
+    - events_count
+    - publications_id
     type: object
   models.HistoricalEvent:
     properties:
@@ -66,21 +74,23 @@ definitions:
       title:
         description: Название события
         type: string
+    required:
+    - description
+    - event_type
+    - id
+    - info
+    - status
+    - title
     type: object
   models.LoginResponseDTO:
     properties:
-      email:
-        type: string
-      name:
-        type: string
-      password:
-        type: string
-      role:
-        $ref: '#/definitions/models.Role'
       token:
         type: string
-      user_id:
-        type: integer
+      user:
+        $ref: '#/definitions/models.User'
+    required:
+    - token
+    - user
     type: object
   models.LoginUserDTO:
     properties:
@@ -117,6 +127,13 @@ definitions:
         type: number
       user_id:
         type: integer
+    required:
+    - creation_date
+    - description
+    - id
+    - status
+    - title
+    - user_id
     type: object
   models.RegisterUserDTO:
     properties:
@@ -170,6 +187,9 @@ definitions:
         type: string
       title:
         type: string
+    required:
+    - description
+    - title
     type: object
   models.UpdateUserDTO:
     properties:
@@ -193,6 +213,12 @@ definitions:
         $ref: '#/definitions/models.Role'
       user_id:
         type: integer
+    required:
+    - email
+    - name
+    - password
+    - role
+    - user_id
     type: object
   resp.ErrorDetail:
     properties:

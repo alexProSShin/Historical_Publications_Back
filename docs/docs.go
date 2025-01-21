@@ -1193,6 +1193,12 @@ const docTemplate = `{
     "definitions": {
         "models.CreateEventDTO": {
             "type": "object",
+            "required": [
+                "description",
+                "event_type",
+                "info",
+                "title"
+            ],
             "properties": {
                 "description": {
                     "description": "Краткое описание события",
@@ -1235,6 +1241,10 @@ const docTemplate = `{
         },
         "models.GetEventsDTO": {
             "type": "object",
+            "required": [
+                "events_count",
+                "publications_id"
+            ],
             "properties": {
                 "events_count": {
                     "type": "integer"
@@ -1252,6 +1262,14 @@ const docTemplate = `{
         },
         "models.HistoricalEvent": {
             "type": "object",
+            "required": [
+                "description",
+                "event_type",
+                "id",
+                "info",
+                "status",
+                "title"
+            ],
             "properties": {
                 "description": {
                     "description": "Краткое описание события",
@@ -1293,24 +1311,16 @@ const docTemplate = `{
         },
         "models.LoginResponseDTO": {
             "type": "object",
+            "required": [
+                "token",
+                "user"
+            ],
             "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "role": {
-                    "$ref": "#/definitions/models.Role"
-                },
                 "token": {
                     "type": "string"
                 },
-                "user_id": {
-                    "type": "integer"
+                "user": {
+                    "$ref": "#/definitions/models.User"
                 }
             }
         },
@@ -1331,6 +1341,14 @@ const docTemplate = `{
         },
         "models.Publication": {
             "type": "object",
+            "required": [
+                "creation_date",
+                "description",
+                "id",
+                "status",
+                "title",
+                "user_id"
+            ],
             "properties": {
                 "completion_date": {
                     "type": "string"
@@ -1437,6 +1455,10 @@ const docTemplate = `{
         },
         "models.UpdatePublicationDTO": {
             "type": "object",
+            "required": [
+                "description",
+                "title"
+            ],
             "properties": {
                 "description": {
                     "type": "string"
@@ -1463,6 +1485,13 @@ const docTemplate = `{
         },
         "models.User": {
             "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "role",
+                "user_id"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
