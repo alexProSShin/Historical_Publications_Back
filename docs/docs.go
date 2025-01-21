@@ -1226,6 +1226,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.EventStatus": {
+            "type": "string",
+            "enum": [
+                "активно",
+                "удалено"
+            ],
+            "x-enum-varnames": [
+                "ActiveEventStatus",
+                "DeletedEventStatus"
+            ]
+        },
         "models.EventType": {
             "type": "string",
             "enum": [
@@ -1301,7 +1312,11 @@ const docTemplate = `{
                 },
                 "status": {
                     "description": "Установлен статус по умолчанию",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.EventStatus"
+                        }
+                    ]
                 },
                 "title": {
                     "description": "Название события",
@@ -1371,7 +1386,11 @@ const docTemplate = `{
                 },
                 "status": {
                     "description": "Установлен статус по умолчанию",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.PublicationStatus"
+                        }
+                    ]
                 },
                 "title": {
                     "description": "Название публикации (исторического события)",
@@ -1384,6 +1403,23 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        },
+        "models.PublicationStatus": {
+            "type": "string",
+            "enum": [
+                "черновик",
+                "в работе",
+                "завершен",
+                "отклонен",
+                "удален"
+            ],
+            "x-enum-varnames": [
+                "DraftPublicationStatus",
+                "WorkPublicationStatus",
+                "CompletedPublicationStatus",
+                "RejectedPublicationStatus",
+                "DeletedPublicationStatus"
+            ]
         },
         "models.RegisterUserDTO": {
             "type": "object",

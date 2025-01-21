@@ -11,8 +11,8 @@ const (
 type EventStatus string
 
 const (
-	ActiveEventStatus  = "активно"
-	DeletedEventStatus = "удалено"
+	ActiveEventStatus  EventStatus = "активно"
+	DeletedEventStatus EventStatus = "удалено"
 )
 
 type CreateEventDTO struct {

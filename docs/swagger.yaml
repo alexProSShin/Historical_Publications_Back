@@ -23,6 +23,14 @@ definitions:
     - info
     - title
     type: object
+  models.EventStatus:
+    enum:
+    - активно
+    - удалено
+    type: string
+    x-enum-varnames:
+    - ActiveEventStatus
+    - DeletedEventStatus
   models.EventType:
     enum:
     - Локация
@@ -69,8 +77,9 @@ definitions:
         description: Источник информации об этом событии
         type: string
       status:
+        allOf:
+        - $ref: '#/definitions/models.EventStatus'
         description: Установлен статус по умолчанию
-        type: string
       title:
         description: Название события
         type: string
@@ -118,8 +127,9 @@ definitions:
       moderator_id:
         type: integer
       status:
+        allOf:
+        - $ref: '#/definitions/models.PublicationStatus'
         description: Установлен статус по умолчанию
-        type: string
       title:
         description: Название публикации (исторического события)
         type: string
@@ -135,6 +145,20 @@ definitions:
     - title
     - user_id
     type: object
+  models.PublicationStatus:
+    enum:
+    - черновик
+    - в работе
+    - завершен
+    - отклонен
+    - удален
+    type: string
+    x-enum-varnames:
+    - DraftPublicationStatus
+    - WorkPublicationStatus
+    - CompletedPublicationStatus
+    - RejectedPublicationStatus
+    - DeletedPublicationStatus
   models.RegisterUserDTO:
     properties:
       email:

@@ -5,11 +5,11 @@ import "time"
 type PublicationStatus string
 
 const (
-	DraftPublicationStatus     = "черновик"
-	WorkPublicationStatus      = "в работе"
-	CompletedPublicationStatus = "завершен"
-	RejectedPublicationStatus  = "отклонен"
-	DeletedPublicationStatus   = "удален"
+	DraftPublicationStatus     PublicationStatus = "черновик"
+	WorkPublicationStatus      PublicationStatus = "в работе"
+	CompletedPublicationStatus PublicationStatus = "завершен"
+	RejectedPublicationStatus  PublicationStatus = "отклонен"
+	DeletedPublicationStatus   PublicationStatus = "удален"
 )
 
 type UpdatePublicationDTO struct {
