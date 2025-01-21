@@ -228,6 +228,8 @@ definitions:
       message:
         description: Сообщение об ошибке
         type: string
+    required:
+    - message
     type: object
   resp.ErrorResponse:
     properties:
@@ -238,6 +240,8 @@ definitions:
         type: array
       meta:
         description: Метаданные (опционально)
+    required:
+    - errors
     type: object
 host: localhost:8080
 info:

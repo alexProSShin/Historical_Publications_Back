@@ -1512,6 +1512,9 @@ const docTemplate = `{
         },
         "resp.ErrorDetail": {
             "type": "object",
+            "required": [
+                "message"
+            ],
             "properties": {
                 "field": {
                     "description": "Поле, связанное с ошибкой",
@@ -1525,6 +1528,9 @@ const docTemplate = `{
         },
         "resp.ErrorResponse": {
             "type": "object",
+            "required": [
+                "errors"
+            ],
             "properties": {
                 "errors": {
                     "description": "Детали ошибок",

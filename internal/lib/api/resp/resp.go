@@ -7,14 +7,14 @@ import (
 
 // ErrorResponse представляет ответ с ошибкой
 type ErrorResponse struct {
-	Errors []ErrorDetail `json:"errors"`         // Детали ошибок
-	Meta   interface{}   `json:"meta,omitempty"` // Метаданные (опционально)
+	Errors []ErrorDetail `json:"errors" binding:"required"`          // Детали ошибок
+	Meta   interface{}   `json:"meta,omitempty" binding:"omitempty"` // Метаданные (опционально)
 }
 
 // ErrorDetail представляет описание одной ошибки
 type ErrorDetail struct {
-	Field   string `json:"field,omitempty"` // Поле, связанное с ошибкой
-	Message string `json:"message"`         // Сообщение об ошибке
+	Field   string `json:"field,omitempty" binding:"omitempty"` // Поле, связанное с ошибкой
+	Message string `json:"message" binding:"required"`          // Сообщение об ошибке
 }
 
 // MetaData - структура для дополнительных данных
