@@ -304,6 +304,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/resp.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Получить список событий
       tags:
       - Events
@@ -420,6 +422,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/resp.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Получить событие по ID
       tags:
       - Events

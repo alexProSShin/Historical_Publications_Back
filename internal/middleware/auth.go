@@ -74,6 +74,39 @@ func AuthMiddleware(redisRepo repository.RedisRepo) gin.HandlerFunc {
 	}
 }
 
+func OptionalAuthMiddleware(redisRepo repository.RedisRepo) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+
+		if authHeader == "" {
+			c.Next()
+			return
+		}
+
+		var tokenString string
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			tokenString = strings.TrimPrefix(authHeader, "Bearer ")
+		} else {
+			tokenString = authHeader
+		}
+
+		userID, err := parseJWT(tokenString)
+		if err != nil {
+			c.Next()
+			return
+		}
+
+		redisToken, err := redisRepo.Get("user:" + strconv.Itoa(userID))
+		if err != nil || redisToken != tokenString {
+			c.Next()
+			return
+		}
+
+		c.Set("userID", userID)
+		c.Next()
+	}
+}
+
 func RequireModeratorRole(getUser func(int) (*models.User, error)) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, exists := c.Get("userID")

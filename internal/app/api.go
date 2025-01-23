@@ -78,6 +78,7 @@ func (app *Application) setupRoutes(r *gin.Engine, h *handlers.Handler) {
 
 	events = r.Group("/events")
 	{
+		events.Use(middleware.OptionalAuthMiddleware(app.RedisRepo))
 		events.GET("", h.HandleGetEvents)
 		events.GET("/:eventID", h.HandleGetEventByID)
 	}

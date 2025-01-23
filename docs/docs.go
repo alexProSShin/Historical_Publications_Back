@@ -26,6 +26,11 @@ const docTemplate = `{
     "paths": {
         "/events": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Возвращает список событий с возможностью фильтрации по названию. Также возвращает черновик публикации пользователя, если он существует.",
                 "consumes": [
                     "application/json"
@@ -130,6 +135,11 @@ const docTemplate = `{
         },
         "/events/{eventID}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Возвращает событие по уникальному идентификатору.",
                 "consumes": [
                     "application/json"

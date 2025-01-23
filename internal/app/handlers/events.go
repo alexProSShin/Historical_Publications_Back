@@ -16,6 +16,7 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        title  query    string  false  "Название события"
+// @Security BearerAuth
 // @Success      200    {object}  models.GetEventsDTO
 // @Failure      404    {object}  resp.ErrorResponse  "События не найдены"
 // @Failure      500    {object}  resp.ErrorResponse   "Внутренняя ошибка сервера"
@@ -57,6 +58,7 @@ func (h *Handler) HandleGetEvents(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        eventID  path    int  true  "Идентификатор события"
+// @Security BearerAuth
 // @Success      200      {object}  models.HistoricalEvent
 // @Failure      400      {object}  resp.ErrorResponse   "Неверный формат ID события"
 // @Failure      404      {object}  resp.ErrorResponse   "Событие не найдено"
