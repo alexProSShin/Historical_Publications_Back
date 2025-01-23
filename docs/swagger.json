@@ -696,7 +696,7 @@
                     "200": {
                         "description": "Публикация",
                         "schema": {
-                            "$ref": "#/definitions/models.Publication"
+                            "$ref": "#/definitions/models.GetPublicationDTO"
                         }
                     },
                     "400": {
@@ -1273,6 +1273,62 @@
                     }
                 },
                 "publications_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.GetPublicationDTO": {
+            "type": "object",
+            "required": [
+                "creation_date",
+                "description",
+                "id",
+                "status",
+                "title",
+                "user_id"
+            ],
+            "properties": {
+                "completion_date": {
+                    "type": "string"
+                },
+                "creation_date": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Краткое описание события",
+                    "type": "string"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.HistoricalEvent"
+                    }
+                },
+                "formation_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "moderator_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "Установлен статус по умолчанию",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.PublicationStatus"
+                        }
+                    ]
+                },
+                "title": {
+                    "description": "Название публикации (исторического события)",
+                    "type": "string"
+                },
+                "trust_score": {
+                    "type": "number"
+                },
+                "user_id": {
                     "type": "integer"
                 }
             }

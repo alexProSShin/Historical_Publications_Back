@@ -79,7 +79,7 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 // @Produce      json
 // @Param        publicationID  path    int  true  "Идентификатор публикации"
 // @Security BearerAuth
-// @Success      200            {object}  models.Publication   "Публикация"
+// @Success      200            {object}  models.GetPublicationDTO   "Публикация"
 // @Failure      400            {object}  resp.ErrorResponse  "Неверный формат ID публикации"
 // @Failure      401            {object}  resp.ErrorResponse  "Неверные учетные данные"
 // @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"

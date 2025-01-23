@@ -55,6 +55,44 @@ definitions:
     - events_count
     - publications_id
     type: object
+  models.GetPublicationDTO:
+    properties:
+      completion_date:
+        type: string
+      creation_date:
+        type: string
+      description:
+        description: Краткое описание события
+        type: string
+      events:
+        items:
+          $ref: '#/definitions/models.HistoricalEvent'
+        type: array
+      formation_date:
+        type: string
+      id:
+        type: integer
+      moderator_id:
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/models.PublicationStatus'
+        description: Установлен статус по умолчанию
+      title:
+        description: Название публикации (исторического события)
+        type: string
+      trust_score:
+        type: number
+      user_id:
+        type: integer
+    required:
+    - creation_date
+    - description
+    - id
+    - status
+    - title
+    - user_id
+    type: object
   models.HistoricalEvent:
     properties:
       description:
@@ -747,7 +785,7 @@ paths:
         "200":
           description: Публикация
           schema:
-            $ref: '#/definitions/models.Publication'
+            $ref: '#/definitions/models.GetPublicationDTO'
         "400":
           description: Неверный формат ID публикации
           schema:
