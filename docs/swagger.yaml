@@ -231,8 +231,6 @@ definitions:
         type: string
       name:
         type: string
-      password:
-        type: string
       role:
         $ref: '#/definitions/models.Role'
       user_id:
@@ -240,7 +238,6 @@ definitions:
     required:
     - email
     - name
-    - password
     - role
     - user_id
     type: object

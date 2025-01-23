@@ -1520,7 +1520,6 @@
             "required": [
                 "email",
                 "name",
-                "password",
                 "role",
                 "user_id"
             ],
@@ -1529,9 +1528,6 @@
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "password": {
                     "type": "string"
                 },
                 "role": {

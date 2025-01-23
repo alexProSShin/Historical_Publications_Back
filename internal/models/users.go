@@ -3,7 +3,7 @@ package models
 type User struct {
 	ID       int    `gorm:"primaryKey" json:"user_id" binding:"required"`
 	Name     string `json:"name" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Password string `json:"-"`
 	Email    string `json:"email" binding:"required,email"`
 	Role     Role   `json:"role" binding:"required"`
 }

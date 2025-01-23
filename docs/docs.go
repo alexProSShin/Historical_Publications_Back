@@ -1524,7 +1524,6 @@ const docTemplate = `{
             "required": [
                 "email",
                 "name",
-                "password",
                 "role",
                 "user_id"
             ],
@@ -1533,9 +1532,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "password": {
                     "type": "string"
                 },
                 "role": {
