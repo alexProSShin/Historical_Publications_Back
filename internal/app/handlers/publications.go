@@ -239,7 +239,7 @@ func (h *Handler) HandleFormPublication(c *gin.Context) {
 // @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"
 // @Failure      409            {object}  resp.ErrorResponse  "Неверный статус для завершения публикации"
 // @Failure      500            {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
-// @Router       /publications/{publicationID}/finalize [put]
+// @Router       /publications/{publicationID}/finalized [put]
 func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
