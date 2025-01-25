@@ -890,7 +890,7 @@ paths:
       summary: Обновить публикацию по ID
       tags:
       - Publications
-  /publications/{publicationID}/finalize:
+  /publications/{publicationID}/finalized:
     put:
       consumes:
       - application/json

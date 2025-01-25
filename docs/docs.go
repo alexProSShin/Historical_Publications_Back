@@ -854,7 +854,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/publications/{publicationID}/finalize": {
+        "/publications/{publicationID}/finalized": {
             "put": {
                 "security": [
                     {
