@@ -85,6 +85,8 @@ definitions:
         type: number
       user_id:
         type: integer
+      user_name:
+        type: string
     required:
     - creation_date
     - description
@@ -178,6 +180,8 @@ definitions:
         type: number
       user_id:
         type: integer
+      user_name:
+        type: string
     required:
     - creation_date
     - description

@@ -31,21 +31,26 @@ func (r *PostgresRepository) GetDraftPublication(userID int) (*models.GetPublica
 
 func (r *PostgresRepository) GetPublications(userID int, status models.PublicationStatus, startDate, endDate *time.Time) ([]models.Publication, error) {
 	var publications []models.Publication
-	query := r.db.Where("user_id = ? AND status != ?", userID, models.DeletedPublicationStatus)
+	
+	query := r.db.Table("publications").
+		Select("publications.*, users.name AS user_name").
+		Joins("LEFT JOIN users ON users.id = publications.user_id").
+		Where("publications.user_id = ? AND publications.status != ?", userID, models.DeletedPublicationStatus)
 
 	if status != "" {
-		query = query.Where("status = ?", status)
+		query = query.Where("publications.status = ?", status)
 	}
 	if startDate != nil {
-		query = query.Where("formation_date >= ?", *startDate)
+		query = query.Where("publications.formation_date >= ?", *startDate)
 	}
 	if endDate != nil {
-		query = query.Where("formation_date <= ?", *endDate)
+		query = query.Where("publications.formation_date <= ?", *endDate)
 	}
 
 	if err := query.Find(&publications).Error; err != nil {
-		return nil, errors.Wrap(err, "failed to fetch publications")
+		return nil, errors.Wrap(err, "failed to fetch publications with user names")
 	}
+
 	return publications, nil
 }
 
@@ -67,7 +72,7 @@ func (r *PostgresRepository) GetPublicationByID(userID int, id int) (*models.Get
 		Scan(&events).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to fetch events with priorities for publication")
 	}
-	
+
 	return &models.GetPublicationDTO{
 		Publication: publication,
 		Events:      events,

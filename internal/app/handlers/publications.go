@@ -63,11 +63,6 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 		return
 	}
 
-	if len(publications) == 0 {
-		resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
-		return
-	}
-
 	resp.WriteJSON(c.Writer, http.StatusOK, publications)
 }
 

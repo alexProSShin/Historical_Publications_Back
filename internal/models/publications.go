@@ -28,6 +28,7 @@ type Publication struct {
 	CompletionDate *time.Time        `json:"completion_date" binding:"omitempty"`
 	UserID         int               `json:"user_id" binding:"required"`
 	ModeratorID    *int              `json:"moderator_id" binding:"omitempty"`
+	UserName       *string           `json:"user_name,omitempty" binding:"omitempty"`
 }
 
 type GetPublicationDTO struct {
