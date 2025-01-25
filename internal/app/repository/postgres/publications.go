@@ -29,17 +29,23 @@ func (r *PostgresRepository) GetDraftPublication(userID int) (*models.GetPublica
 	}, nil
 }
 
-func (r *PostgresRepository) GetPublications(userID int, status models.PublicationStatus, startDate, endDate *time.Time) ([]models.Publication, error) {
+func (r *PostgresRepository) GetPublications(user *models.User, status models.PublicationStatus, startDate, endDate *time.Time) ([]models.Publication, error) {
 	var publications []models.Publication
-	
+
 	query := r.db.Table("publications").
 		Select("publications.*, users.name AS user_name").
-		Joins("LEFT JOIN users ON users.id = publications.user_id").
-		Where("publications.user_id = ? AND publications.status != ?", userID, models.DeletedPublicationStatus)
+		Joins("LEFT JOIN users ON users.id = publications.user_id")
+
+	if user.Role == models.RoleUser {
+		query = query.Where("publications.user_id = ? AND publications.status != ?", user.ID, models.DeletedPublicationStatus)
+	} else if user.Role == models.RoleModerator {
+		query = query.Where("publications.status != ?", models.DeletedPublicationStatus)
+	}
 
 	if status != "" {
 		query = query.Where("publications.status = ?", status)
 	}
+
 	if startDate != nil {
 		query = query.Where("publications.formation_date >= ?", *startDate)
 	}
@@ -54,9 +60,15 @@ func (r *PostgresRepository) GetPublications(userID int, status models.Publicati
 	return publications, nil
 }
 
-func (r *PostgresRepository) GetPublicationByID(userID int, id int) (*models.GetPublicationDTO, error) {
+func (r *PostgresRepository) GetPublicationByID(user *models.User, id int) (*models.GetPublicationDTO, error) {
 	var publication models.Publication
-	if err := r.db.Where("id = ? AND user_id = ?", id, userID).First(&publication).Error; err != nil {
+	query := r.db.Where("id = ?", id)
+
+	if user.Role == models.RoleUser {
+		query = query.Where("user_id = ?", user.ID)
+	}
+
+	if err := query.First(&publication).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, models.ErrPublicationNotFound
 		}
@@ -88,16 +100,27 @@ func (r *PostgresRepository) UpdatePublication(userID int, id int, publication *
 		return nil, errors.Wrap(err, "failed to fetch publication")
 	}
 
+	user, err := r.GetUserByID(userID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to fetch user")
+	}
+
 	if err := r.db.Model(&existingPublication).Updates(publication).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to update publication")
 	}
 
-	return r.GetPublicationByID(userID, id)
+	return r.GetPublicationByID(user, id)
 }
 
-func (r *PostgresRepository) UpdatePublicationStatus(userID, id int, status models.PublicationStatus) (*models.GetPublicationDTO, error) {
+func (r *PostgresRepository) UpdatePublicationStatus(user *models.User, id int, status models.PublicationStatus) (*models.GetPublicationDTO, error) {
 	var publication models.Publication
-	if err := r.db.Where("id = ? AND user_id = ?", id, userID).First(&publication).Error; err != nil {
+	query := r.db.Where("id = ?", id)
+
+	if user.Role == models.RoleUser {
+		query = query.Where("user_id = ?", user.ID)
+	}
+
+	if err := query.First(&publication).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, models.ErrPublicationNotFound
 		}
@@ -113,7 +136,7 @@ func (r *PostgresRepository) UpdatePublicationStatus(userID, id int, status mode
 		publication.FormationDate = &currentTime
 	} else {
 		publication.CompletionDate = &currentTime
-		publication.ModeratorID = &userID
+		publication.ModeratorID = &user.ID
 		trustScore := calculateTrustScore(&publication)
 		publication.TrustScore = &trustScore
 	}
@@ -123,7 +146,7 @@ func (r *PostgresRepository) UpdatePublicationStatus(userID, id int, status mode
 		return nil, errors.Wrap(err, "failed to update publication status")
 	}
 
-	return r.GetPublicationByID(userID, id)
+	return r.GetPublicationByID(user, id)
 }
 
 func (r *PostgresRepository) DeletePublication(userID int, id int) error {

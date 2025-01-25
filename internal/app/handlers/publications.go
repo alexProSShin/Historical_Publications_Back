@@ -57,7 +57,13 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 		endDate = &parsedEndDate
 	}
 
-	publications, err := h.repo.GetPublications(userID, status, startDate, endDate)
+	user, err := h.repo.GetUserByID(userID)
+	if err != nil {
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
+		return
+	}
+
+	publications, err := h.repo.GetPublications(user, status, startDate, endDate)
 	if err != nil {
 		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
@@ -93,7 +99,13 @@ func (h *Handler) HandleGetPublicationByID(c *gin.Context) {
 		return
 	}
 
-	publication, err := h.repo.GetPublicationByID(userID, id)
+	user, err := h.repo.GetUserByID(userID)
+	if err != nil {
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
+		return
+	}
+
+	publication, err := h.repo.GetPublicationByID(user, id)
 	if err != nil {
 		if errors.Is(err, models.ErrPublicationNotFound) {
 			resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
@@ -181,7 +193,13 @@ func (h *Handler) HandleFormPublication(c *gin.Context) {
 		return
 	}
 
-	publication, err := h.repo.GetPublicationByID(userID, id)
+	user, err := h.repo.GetUserByID(userID)
+	if err != nil {
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
+		return
+	}
+
+	publication, err := h.repo.GetPublicationByID(user, id)
 	if err != nil {
 		if errors.Is(err, models.ErrPublicationNotFound) {
 			resp.WriteError(c.Writer, http.StatusNotFound, resp.SingleError(err.Error()), nil)
@@ -196,7 +214,7 @@ func (h *Handler) HandleFormPublication(c *gin.Context) {
 		return
 	}
 
-	publication, err = h.repo.UpdatePublicationStatus(userID, id, models.WorkPublicationStatus)
+	publication, err = h.repo.UpdatePublicationStatus(user, id, models.WorkPublicationStatus)
 	if err != nil {
 		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
@@ -237,7 +255,13 @@ func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 
 	status := models.PublicationStatus(c.Query("status"))
 
-	publication, err := h.repo.GetPublicationByID(userID, id)
+	user, err := h.repo.GetUserByID(userID)
+	if err != nil {
+		resp.WriteError(c.Writer, http.StatusUnauthorized, resp.SingleError(err.Error()), nil)
+		return
+	}
+
+	publication, err := h.repo.GetPublicationByID(user, id)
 	if err != nil {
 		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
@@ -248,7 +272,7 @@ func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 		return
 	}
 
-	publication, err = h.repo.UpdatePublicationStatus(userID, id, status)
+	publication, err = h.repo.UpdatePublicationStatus(user, id, status)
 	if err != nil {
 		resp.WriteError(c.Writer, http.StatusInternalServerError, resp.SingleError(err.Error()), nil)
 		return
