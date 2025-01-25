@@ -40,6 +40,7 @@ type HistoricalEvent struct {
 	Info        string      `json:"info" binding:"required"`                          // информация о событии
 	PhotoURL    *string     `json:"photo_url" binding:"omitempty"`                    // URL фотографии, связанной с событием
 	Source      *string     `json:"source" binding:"omitempty"`                       // Источник информации об этом событии
+	Priority    *string     `json:"priority,omitempty" binding:"omitempty"`           // Приоритет
 }
 
 type GetEventsDTO struct {

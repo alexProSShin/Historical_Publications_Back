@@ -111,6 +111,9 @@ definitions:
       photo_url:
         description: URL фотографии, связанной с событием
         type: string
+      priority:
+        description: Приоритет
+        type: string
       source:
         description: Источник информации об этом событии
         type: string
@@ -1004,41 +1007,7 @@ paths:
       summary: Выход пользователя
       tags:
       - Auth
-  /users/register:
-    post:
-      consumes:
-      - application/json
-      description: Регистрирует нового пользователя и возвращает JWT токен.
-      parameters:
-      - description: Данные пользователя
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/models.RegisterUserDTO'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.LoginResponseDTO'
-        "400":
-          description: Неверные данные запроса
-          schema:
-            $ref: '#/definitions/resp.ErrorResponse'
-        "409":
-          description: Пользователь уже существует
-          schema:
-            $ref: '#/definitions/resp.ErrorResponse'
-        "500":
-          description: Внутренняя ошибка сервера
-          schema:
-            $ref: '#/definitions/resp.ErrorResponse'
-      summary: Регистрация нового пользователя
-      tags:
-      - Auth
-  /users/update:
+  /users/me:
     put:
       consumes:
       - application/json
@@ -1072,6 +1041,40 @@ paths:
       security:
       - BearerAuth: []
       summary: Обновить информацию о пользователе
+      tags:
+      - Auth
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует нового пользователя и возвращает JWT токен.
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.LoginResponseDTO'
+        "400":
+          description: Неверные данные запроса
+          schema:
+            $ref: '#/definitions/resp.ErrorResponse'
+        "409":
+          description: Пользователь уже существует
+          schema:
+            $ref: '#/definitions/resp.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/resp.ErrorResponse'
+      summary: Регистрация нового пользователя
       tags:
       - Auth
 schemes:

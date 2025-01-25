@@ -59,13 +59,15 @@ func (r *PostgresRepository) GetPublicationByID(userID int, id int) (*models.Get
 	}
 
 	var events []models.HistoricalEvent
-	if err := r.db.Joins("JOIN publications_events ON publications_events.event_id = historical_events.id").
+	if err := r.db.Table("historical_events").
+		Select("historical_events.*, publications_events.priority AS priority").
+		Joins("JOIN publications_events ON publications_events.event_id = historical_events.id").
 		Where("publications_events.publication_id = ?", id).
 		Order("publications_events.priority DESC").
-		Find(&events).Error; err != nil {
-		return nil, errors.Wrap(err, "failed to fetch events for publication")
+		Scan(&events).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to fetch events with priorities for publication")
 	}
-
+	
 	return &models.GetPublicationDTO{
 		Publication: publication,
 		Events:      events,

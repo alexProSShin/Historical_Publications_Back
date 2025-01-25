@@ -165,7 +165,7 @@ func (h *Handler) HandleLogoutUser(c *gin.Context) {
 // @Failure      400         {object}  resp.ErrorResponse   "Неверные данные запроса"
 // @Failure      401         {object}  resp.ErrorResponse   "Неавторизованный пользователь"
 // @Failure      500         {object}  resp.ErrorResponse   "Внутренняя ошибка сервера"
-// @Router       /users/update [put]
+// @Router       /users/me [put]
 func (h *Handler) HandleUpdateUser(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
