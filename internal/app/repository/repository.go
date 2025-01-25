@@ -15,7 +15,7 @@ type PostgresRepo interface {
 	AddEventToPublication(userID int, eventID int) error
 	AddImageToEvent(id int, file *multipart.FileHeader) error
 	GetDraftPublication(userID int) (*models.GetPublicationDTO, error)
-	GetPublications(user *models.User, status models.PublicationStatus, startDate, endDate *time.Time) ([]models.Publication, error)
+	GetPublications(user *models.User, status models.PublicationStatus, startDate, endDate *time.Time) ([]models.GetPublications, error)
 	GetPublicationByID(user *models.User, id int) (*models.GetPublicationDTO, error)
 	UpdatePublication(userID int, id int, publication *models.UpdatePublicationDTO) (*models.GetPublicationDTO, error)
 	UpdatePublicationStatus(user *models.User, id int, status models.PublicationStatus) (*models.GetPublicationDTO, error)

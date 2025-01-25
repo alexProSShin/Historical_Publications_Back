@@ -638,7 +638,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Publication"
+                                "$ref": "#/definitions/models.GetPublications"
                             }
                         }
                     },
@@ -855,7 +855,7 @@ const docTemplate = `{
             }
         },
         "/publications/{publicationID}/finalize": {
-            "post": {
+            "put": {
                 "security": [
                     {
                         "BearerAuth": []
@@ -935,7 +935,7 @@ const docTemplate = `{
             }
         },
         "/publications/{publicationID}/form": {
-            "post": {
+            "put": {
                 "security": [
                     {
                         "BearerAuth": []
@@ -1334,6 +1334,56 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.GetPublications": {
+            "type": "object",
+            "required": [
+                "creation_date",
+                "description",
+                "id",
+                "status",
+                "title",
+                "user_id"
+            ],
+            "properties": {
+                "completion_date": {
+                    "type": "string"
+                },
+                "creation_date": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Краткое описание события",
+                    "type": "string"
+                },
+                "formation_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "moderator_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "Установлен статус по умолчанию",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.PublicationStatus"
+                        }
+                    ]
+                },
+                "title": {
+                    "description": "Название публикации (исторического события)",
+                    "type": "string"
+                },
+                "trust_score": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "integer"
                 },
                 "user_name": {
                     "type": "string"
@@ -1474,9 +1524,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
-                },
-                "user_name": {
-                    "type": "string"
                 }
             }
         },

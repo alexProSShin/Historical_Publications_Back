@@ -17,6 +17,11 @@ type UpdatePublicationDTO struct {
 	Description string `json:"description" binding:"required"`
 }
 
+type GetPublications struct {
+	Publication
+	UserName *string `json:"user_name,omitempty" binding:"omitempty"`
+}
+
 type Publication struct {
 	ID             int               `gorm:"primarykey" json:"id" binding:"required"`
 	Title          string            `gorm:"default:Черновая публикация" json:"title" binding:"required"`                    // Название публикации (исторического события)
@@ -28,7 +33,6 @@ type Publication struct {
 	CompletionDate *time.Time        `json:"completion_date" binding:"omitempty"`
 	UserID         int               `json:"user_id" binding:"required"`
 	ModeratorID    *int              `json:"moderator_id" binding:"omitempty"`
-	UserName       *string           `json:"user_name,omitempty" binding:"omitempty"`
 }
 
 type GetPublicationDTO struct {

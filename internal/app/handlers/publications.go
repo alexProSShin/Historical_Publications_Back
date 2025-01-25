@@ -20,7 +20,7 @@ import (
 // @Param        startDate query    string     false  "Дата начала (формат: yyyy-mm-dd)"
 // @Param        endDate   query    string     false  "Дата окончания (формат: yyyy-mm-dd)"
 // @Security BearerAuth
-// @Success      200      {array}   models.Publication   "Список публикаций"
+// @Success      200      {array}   models.GetPublications   "Список публикаций"
 // @Failure      400      {object}  resp.ErrorResponse  "Неверный формат параметров"
 // @Failure      401      {object}  resp.ErrorResponse  "Неверные учетные данные"
 // @Failure      404      {object}  resp.ErrorResponse  "Публикации не найдены"
@@ -179,7 +179,7 @@ func (h *Handler) HandleUpdatePublication(c *gin.Context) {
 // @Failure      403            {object}  resp.ErrorResponse  "Недостаточно прав"
 // @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"
 // @Failure      500            {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
-// @Router       /publications/{publicationID}/form [post]
+// @Router       /publications/{publicationID}/form [put]
 func (h *Handler) HandleFormPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {
@@ -239,7 +239,7 @@ func (h *Handler) HandleFormPublication(c *gin.Context) {
 // @Failure      404            {object}  resp.ErrorResponse  "Публикация не найдена"
 // @Failure      409            {object}  resp.ErrorResponse  "Неверный статус для завершения публикации"
 // @Failure      500            {object}  resp.ErrorResponse  "Внутренняя ошибка сервера"
-// @Router       /publications/{publicationID}/finalize [post]
+// @Router       /publications/{publicationID}/finalize [put]
 func (h *Handler) HandleFinalizedPublication(c *gin.Context) {
 	userID, err := getUserIDFromContext(c)
 	if err != nil {

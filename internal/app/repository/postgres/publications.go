@@ -29,8 +29,8 @@ func (r *PostgresRepository) GetDraftPublication(userID int) (*models.GetPublica
 	}, nil
 }
 
-func (r *PostgresRepository) GetPublications(user *models.User, status models.PublicationStatus, startDate, endDate *time.Time) ([]models.Publication, error) {
-	var publications []models.Publication
+func (r *PostgresRepository) GetPublications(user *models.User, status models.PublicationStatus, startDate, endDate *time.Time) ([]models.GetPublications, error) {
+	var publications []models.GetPublications
 
 	query := r.db.Table("publications").
 		Select("publications.*, users.name AS user_name").
@@ -39,7 +39,7 @@ func (r *PostgresRepository) GetPublications(user *models.User, status models.Pu
 	if user.Role == models.RoleUser {
 		query = query.Where("publications.user_id = ? AND publications.status != ?", user.ID, models.DeletedPublicationStatus)
 	} else if user.Role == models.RoleModerator {
-		query = query.Where("publications.status != ?", models.DeletedPublicationStatus)
+		query = query.Where("publications.status != ? AND publications.status !=", models.DeletedPublicationStatus, models.DraftPublicationStatus)
 	}
 
 	if status != "" {

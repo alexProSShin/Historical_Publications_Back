@@ -85,6 +85,40 @@ definitions:
         type: number
       user_id:
         type: integer
+    required:
+    - creation_date
+    - description
+    - id
+    - status
+    - title
+    - user_id
+    type: object
+  models.GetPublications:
+    properties:
+      completion_date:
+        type: string
+      creation_date:
+        type: string
+      description:
+        description: Краткое описание события
+        type: string
+      formation_date:
+        type: string
+      id:
+        type: integer
+      moderator_id:
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/models.PublicationStatus'
+        description: Установлен статус по умолчанию
+      title:
+        description: Название публикации (исторического события)
+        type: string
+      trust_score:
+        type: number
+      user_id:
+        type: integer
       user_name:
         type: string
     required:
@@ -180,8 +214,6 @@ definitions:
         type: number
       user_id:
         type: integer
-      user_name:
-        type: string
     required:
     - creation_date
     - description
@@ -716,7 +748,7 @@ paths:
           description: Список публикаций
           schema:
             items:
-              $ref: '#/definitions/models.Publication'
+              $ref: '#/definitions/models.GetPublications'
             type: array
         "400":
           description: Неверный формат параметров
@@ -859,7 +891,7 @@ paths:
       tags:
       - Publications
   /publications/{publicationID}/finalize:
-    post:
+    put:
       consumes:
       - application/json
       description: Переводит публикацию в финальный статус.
@@ -911,7 +943,7 @@ paths:
       tags:
       - Publications
   /publications/{publicationID}/form:
-    post:
+    put:
       consumes:
       - application/json
       description: Переводит черновик публикации в статус работы.
