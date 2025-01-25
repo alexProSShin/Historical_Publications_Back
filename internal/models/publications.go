@@ -37,5 +37,5 @@ type Publication struct {
 
 type GetPublicationDTO struct {
 	Publication
-	Events []HistoricalEvent `json:"events" binding:"omitempty"`
+	Events []GetEvents `json:"events" binding:"omitempty"`
 }

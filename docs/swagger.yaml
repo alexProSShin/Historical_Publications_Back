@@ -41,6 +41,45 @@ definitions:
     - EventTypeLocation
     - EventTypeEvent
     - EventTypeArtifact
+  models.GetEvents:
+    properties:
+      description:
+        description: Краткое описание события
+        type: string
+      event_type:
+        allOf:
+        - $ref: '#/definitions/models.EventType'
+        description: 'тип события: локация, событие, артефакт'
+      id:
+        description: Уникальный идентификатор события
+        type: integer
+      info:
+        description: информация о событии
+        type: string
+      photo_url:
+        description: URL фотографии, связанной с событием
+        type: string
+      priority:
+        description: Приоритет
+        type: string
+      source:
+        description: Источник информации об этом событии
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.EventStatus'
+        description: Установлен статус по умолчанию
+      title:
+        description: Название события
+        type: string
+    required:
+    - description
+    - event_type
+    - id
+    - info
+    - status
+    - title
+    type: object
   models.GetEventsDTO:
     properties:
       events_count:
@@ -66,7 +105,7 @@ definitions:
         type: string
       events:
         items:
-          $ref: '#/definitions/models.HistoricalEvent'
+          $ref: '#/definitions/models.GetEvents'
         type: array
       formation_date:
         type: string
@@ -146,9 +185,6 @@ definitions:
         type: string
       photo_url:
         description: URL фотографии, связанной с событием
-        type: string
-      priority:
-        description: Приоритет
         type: string
       source:
         description: Источник информации об этом событии

@@ -16,7 +16,7 @@ func (r *PostgresRepository) GetDraftPublication(userID int) (*models.GetPublica
 		}
 		return nil, errors.Wrap(err, "failed to fetch draft publication")
 	}
-	var events []models.HistoricalEvent
+	var events []models.GetEvents
 	err = r.db.Joins("JOIN publications_events ON publications_events.event_id = historical_events.id").
 		Where("publications_events.publication_id = ?", publication.ID).
 		Find(&events).Error
@@ -75,7 +75,7 @@ func (r *PostgresRepository) GetPublicationByID(user *models.User, id int) (*mod
 		return nil, errors.Wrap(err, "failed to fetch publication")
 	}
 
-	var events []models.HistoricalEvent
+	var events []models.GetEvents
 	if err := r.db.Table("historical_events").
 		Select("historical_events.*, publications_events.priority AS priority").
 		Joins("JOIN publications_events ON publications_events.event_id = historical_events.id").

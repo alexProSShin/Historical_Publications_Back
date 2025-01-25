@@ -1260,6 +1260,63 @@ const docTemplate = `{
                 "EventTypeArtifact"
             ]
         },
+        "models.GetEvents": {
+            "type": "object",
+            "required": [
+                "description",
+                "event_type",
+                "id",
+                "info",
+                "status",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "description": "Краткое описание события",
+                    "type": "string"
+                },
+                "event_type": {
+                    "description": "тип события: локация, событие, артефакт",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.EventType"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "Уникальный идентификатор события",
+                    "type": "integer"
+                },
+                "info": {
+                    "description": "информация о событии",
+                    "type": "string"
+                },
+                "photo_url": {
+                    "description": "URL фотографии, связанной с событием",
+                    "type": "string"
+                },
+                "priority": {
+                    "description": "Приоритет",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Источник информации об этом событии",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Установлен статус по умолчанию",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.EventStatus"
+                        }
+                    ]
+                },
+                "title": {
+                    "description": "Название события",
+                    "type": "string"
+                }
+            }
+        },
         "models.GetEventsDTO": {
             "type": "object",
             "required": [
@@ -1305,7 +1362,7 @@ const docTemplate = `{
                 "events": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.HistoricalEvent"
+                        "$ref": "#/definitions/models.GetEvents"
                     }
                 },
                 "formation_date": {
@@ -1423,10 +1480,6 @@ const docTemplate = `{
                 },
                 "photo_url": {
                     "description": "URL фотографии, связанной с событием",
-                    "type": "string"
-                },
-                "priority": {
-                    "description": "Приоритет",
                     "type": "string"
                 },
                 "source": {

@@ -31,6 +31,11 @@ type UpdateEventDTO struct {
 	Source      *string   `json:"source" binding:"omitempty"`      // Источник информации об этом событии
 }
 
+type GetEvents struct {
+	HistoricalEvent
+	Priority *string `json:"priority,omitempty" binding:"omitempty"` // Приоритет
+}
+
 type HistoricalEvent struct {
 	ID          int         `gorm:"primarykey" json:"id" binding:"required"`          // Уникальный идентификатор события
 	Status      EventStatus `gorm:"default:активно" json:"status" binding:"required"` // Установлен статус по умолчанию
@@ -40,7 +45,6 @@ type HistoricalEvent struct {
 	Info        string      `json:"info" binding:"required"`                          // информация о событии
 	PhotoURL    *string     `json:"photo_url" binding:"omitempty"`                    // URL фотографии, связанной с событием
 	Source      *string     `json:"source" binding:"omitempty"`                       // Источник информации об этом событии
-	Priority    *string     `json:"priority,omitempty" binding:"omitempty"`           // Приоритет
 }
 
 type GetEventsDTO struct {
