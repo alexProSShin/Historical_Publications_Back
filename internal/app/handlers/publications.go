@@ -46,11 +46,6 @@ func (h *Handler) HandleGetPublications(c *gin.Context) {
 		return
 	}
 
-	if len(publications) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
-
 	c.JSON(http.StatusOK, publications)
 }
 
