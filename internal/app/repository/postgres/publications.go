@@ -17,11 +17,13 @@ func (r *PostgresRepository) GetDraftPublication(userID int) (*models.GetPublica
 		return nil, errors.Wrap(err, "failed to fetch draft publication")
 	}
 	var events []models.GetEvents
-	err = r.db.Joins("JOIN publications_events ON publications_events.event_id = historical_events.id").
+	if err := r.db.Table("historical_events").
+		Select("historical_events.*, publications_events.priority AS priority").
+		Joins("JOIN publications_events ON publications_events.event_id = historical_events.id").
 		Where("publications_events.publication_id = ?", publication.ID).
-		Find(&events).Error
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to fetch events for draft publication")
+		Order("publications_events.priority DESC").
+		Scan(&events).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to fetch events with priorities for publication")
 	}
 	return &models.GetPublicationDTO{
 		Publication: publication,
@@ -39,7 +41,7 @@ func (r *PostgresRepository) GetPublications(user *models.User, status models.Pu
 	if user.Role == models.RoleUser {
 		query = query.Where("publications.user_id = ? AND publications.status != ?", user.ID, models.DeletedPublicationStatus)
 	} else if user.Role == models.RoleModerator {
-		query = query.Where("publications.status != ? AND publications.status !=", models.DeletedPublicationStatus, models.DraftPublicationStatus)
+		query = query.Where("publications.status != ? AND publications.status != ?", models.DeletedPublicationStatus, models.DraftPublicationStatus)
 	}
 
 	if status != "" {
