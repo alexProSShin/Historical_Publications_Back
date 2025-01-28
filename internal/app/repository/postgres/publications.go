@@ -39,7 +39,7 @@ func (r *PostgresRepository) GetPublications(user *models.User, status models.Pu
 		Joins("LEFT JOIN users ON users.id = publications.user_id")
 
 	if user.Role == models.RoleUser {
-		query = query.Where("publications.user_id = ? AND publications.status != ?", user.ID, models.DeletedPublicationStatus)
+		query = query.Where("publications.user_id = ? AND publications.status != ? AND publications.status != ?", user.ID, models.DeletedPublicationStatus, models.DraftPublicationStatus)
 	} else if user.Role == models.RoleModerator {
 		query = query.Where("publications.status != ? AND publications.status != ?", models.DeletedPublicationStatus, models.DraftPublicationStatus)
 	}
